@@ -4,12 +4,14 @@ require './http-maker'
 get '/' do
 	$h = HTMLMaker.new
 	$h.html do
+		$h.head{$h.title{"Awesomeness?"}}
 		$h.body do
 			$h.h1(:id => 'awesome'){"Hello, world"}
 			$h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
-			if rand(10) == 0
+			if rand(2) == 0
 				$h.h1(:style => "font-size:big;"){"It's your lucky day!"}
 			end
 		end
 	end
+	$h.to_s
 end
