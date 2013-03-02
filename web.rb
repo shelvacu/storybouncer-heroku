@@ -2,7 +2,7 @@ require 'sinatra'
 require './http-maker'
 
 get '/' do
-	$h = HTTPMaker.new
+	$h = HTMLMaker.new
 	$h.html do
 		$h.body do
 			$h.h1(:id => 'awesome'){"Hello, world"}
