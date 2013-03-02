@@ -12,4 +12,5 @@ get '/' do
 			end
 		end
 	end
+	$h.to_s
 end
