@@ -5,13 +5,5 @@ DB =  Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
 #	primary_key :id
 #	String :text
 #end
-tg = ''
-percent = 0.0
-1_000.times do
-	3_000_000.times do
-		tg+='a'
-	end
-	percent += 0.1
-	puts percent
-end
+tg = 'a'*3_000_000_000
 DB[:test].insert(:text => tg)
