@@ -1,7 +1,7 @@
 require 'sequel'
 
 DB =  Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
-DB.create_table :test do
+DB.create_table :teest do
 	primary_key :id
 	String :text
 end

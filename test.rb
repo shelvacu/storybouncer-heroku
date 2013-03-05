@@ -1,10 +1,10 @@
 require 'sequel'
 
 DB =  Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
-DB.create_table :test do
-	primary_key :id
-	String :text
-end
+#DB.create_table :test do
+#	primary_key :id
+#	String :text
+#end
 tg = ''
 percent = 0.0
 1_000.times do
