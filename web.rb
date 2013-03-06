@@ -78,15 +78,15 @@ get '/register.fgh' do
 				h.span{"Username:"}
 				#o =  [('a'..'z'),('A'..'Z')].map{|i| i.to_a}.flatten
 				#string  =  (0...50).map{ o[rand(o.length)] }.join
-				h.input(:type => 'test',:name => "username")
+				h.input(:type => 'text',:name => "username")
 				h.br
 				h.span{"Email:"}
-				h.input(:type => 'test',:name => "email")
+				h.input(:type => 'text',:name => "email")
 				h.br
 				h.span{"Password:"}
-				h.input(:type => 'test',:name => "password")
+				h.input(:type => 'password',:name => "password")
 				h.br
-				h.input(:type => 'submit'){"Register!"}
+				h.input(:type => 'submit', :value => 'Register')
 			end
 		end
 	end
