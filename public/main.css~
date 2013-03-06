@@ -1,0 +1,8 @@
+*{
+	margin-left:auto;
+	margin-right:auto;
+}
+#donatelink{
+	position:relative;
+	right:0px;
+	bottom:0px;
