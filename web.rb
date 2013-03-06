@@ -162,9 +162,11 @@ get '/login.fgh' do
 			h.form(:method => "post") do
 				h << "Username:"
 				h.input(:type => "text",:name => "username")
-			
+				h.br
 				h << "Password:"
 				h.input(:type => "password",:name => "password")
+				h.br
+				h.input(:type => "submit")
 			end
 		end
 	end
@@ -203,6 +205,31 @@ get '/userinfo.fgh' do
 		h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
 	end
 end
+
+get '/verify.fgh' do
+	template("Verify Email") do |h|
+		if params[:key].nil?
+			h.form(:method => 'get') do
+				h.span{"Verification Key:"}
+				h.input(:type => 'text',:name => 'key')
+				h.input(:type => 'submit')
+			end
+		else
+			users = DB[:users].where(:emailver => params[:key]).all
+			if users.empty?
+				h.h1{"Incorrect verification code"}
+			else
+				user = users.first
+				if user[:veri]
+					h.h1{"Already verified"}
+				else
+				
+				end
+			end
+		end
+	end
+end
+	
 
 
 

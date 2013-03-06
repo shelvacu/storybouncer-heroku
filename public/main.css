@@ -2,8 +2,13 @@
 	margin-left:auto;
 	margin-right:auto;
 }
+body{
+	margin-left:20px;
+}
 #donatelink{
-	position:relative;
+	position:absolute;
 	right:0px;
 	bottom:0px;
+	margin-right:10px;
+	margin-bottom:15px;
 }
