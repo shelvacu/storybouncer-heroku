@@ -3,6 +3,7 @@ require 'digest/md5'
 require './http-maker'
 require 'sequel'
 require 'pony'
+require 'pp'
 enable :sessions
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 DB =  Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
@@ -136,12 +137,12 @@ end
 get '/donate.fgh' do
 	template("Donate!") do |h|
 		h.div{"You have two options for donating:"}
-		h.div do |h|
+		h.div do
 			h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
 			h << File.read('./SiteDonatebutton')
 		end
 		h.hr
-		h.div do |h|
+		h.div do
 			h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
 			h << File.read('./Donatebutton')
 		end
@@ -193,6 +194,12 @@ end
 get '/logout.fgh' do
 	session = {}
 	template('Logged out'){|h| h.h2{"Successfully logged out"}}
+end
+
+get '/userinfo.fgh' do
+	template("UserCP") do |h|
+		h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
+	end
 end
 
 

@@ -17,12 +17,12 @@ class HTMLMaker
 		end
 		
 		if block_given?
-			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")}>"
+			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")}>\n"
 			add = String.try_convert(yield self)
 			@currentHTML += add unless add.nil?
 			@currentHTML += "</#{method_name.to_s}>"
 		else
-			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")} />"
+			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")} />\n"
 		end
 		return nil
 	end

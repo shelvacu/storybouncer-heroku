@@ -79,10 +79,10 @@ get '/register.fgh' do
 				#o =  [('a'..'z'),('A'..'Z')].map{|i| i.to_a}.flatten
 				#string  =  (0...50).map{ o[rand(o.length)] }.join
 				h.input(:type => 'test',:name => "username")
-				
+				h.br
 				h.span{"Email:"}
 				h.input(:type => 'test',:name => "email")
-				
+				h.br
 				h.span{"Password:"}
 				h.input(:type => 'test',:name => "password")
 			end
@@ -137,12 +137,12 @@ end
 get '/donate.fgh' do
 	template("Donate!") do |h|
 		h.div{"You have two options for donating:"}
-		h.div do |h|
+		h.div do
 			h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
 			h << File.read('./SiteDonatebutton')
 		end
 		h.hr
-		h.div do |h|
+		h.div do
 			h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
 			h << File.read('./Donatebutton')
 		end
