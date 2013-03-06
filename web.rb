@@ -28,9 +28,9 @@ def valid_username?(name)
 	return true unless name.match(/^[\w_^ ]{1,20}$/).nil?
 	return false
 end
-def makehtml(&block)
+def makehtml#(&block)
 	h = HTMLMaker.new
-	h.html{block.call(h)}
+	h.html{yield h}#block.call(h)}
 	return h.to_s
 end
 def template(pagename="missing title!",js = [],css = [],&block)
@@ -85,6 +85,8 @@ get '/register.fgh' do
 				h.br
 				h.span{"Password:"}
 				h.input(:type => 'test',:name => "password")
+				h.br
+				h.input(:type => 'submit'){"Register!"}
 			end
 		end
 	end

@@ -20,7 +20,7 @@ class HTMLMaker
 			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")}>\n"
 			add = String.try_convert(yield self)
 			@currentHTML += add unless add.nil?
-			@currentHTML += "</#{method_name.to_s}>"
+			@currentHTML += "</#{method_name.to_s}>\n"
 		else
 			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")} />\n"
 		end
