@@ -172,7 +172,7 @@ get '/login.fgh' do
 	template("Login") do |h|
 		if session[:logged]
 			h.h2 do
-				h << "You are already logged in as #{session[:username]}. Perhaps you want to"
+				h << "You are already logged in as #{session[:username]}. Perhaps you want to "
 				h.a(:href => "/logout.fgh"){"logout?"}
 			end
 		else
@@ -213,7 +213,7 @@ post '/login.fgh' do
 end
 
 get '/logout.fgh' do
-	session = {}
+	session.clear
 	template('Logged out'){|h| h.h2{"Successfully logged out"}}
 end
 
