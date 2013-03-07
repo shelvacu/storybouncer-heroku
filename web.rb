@@ -73,7 +73,7 @@ end
 error 404 do
 	template('Not Found') do |h|
 		h.h1{"Oh noes! 404 Not found"}
-		h.h6 do
+		h.h4 do
 			h << "Monkeys stole the page you were looking for. Perhaps you want to go "
 			h.a(:href => '/'){"HOME?"}
 		end
