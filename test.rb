@@ -1,4 +1,4 @@
-require './http-maker'
+require './html-maker'
 
 def makehtml#(&block)
 	h = HTMLMaker.new

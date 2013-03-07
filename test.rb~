@@ -36,10 +36,10 @@ end
 
 stuff = template("Donate!") do |h|
 	#h.div{"You have two options for donating:"}
-	h.div do
+	#h.div do
 		h << "bla."
 		#h << File.read('./SiteDonatebutton')
-	end
+	#end
 	#h.hr
 	#h.div do
 	#	h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
