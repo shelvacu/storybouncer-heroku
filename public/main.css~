@@ -5,8 +5,22 @@
 body{
 	margin-left:20px;
 }
+#bottombar{
+	width:100%;
+	margin-bottom:15px;
+	position:absolute;
+	bottom:0px;
+	color:white;
+	background-color:black;
+	border-top:2px solid gray;
+}
+#copy{
+	font-size:small;
+	/*font-color:gray;*/
+}
 #donatelink{
-	position:relative;
+	position:absolute;
 	right:0px;
 	bottom:0px;
+	margin-right:10px;
 }

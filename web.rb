@@ -47,9 +47,11 @@ def template(pagename="missing title!",js = [],css = [],&block)
 		end
 		h.body do
 			block.call(h)
-			h.span(:style => "font-size:small;font-color:gray;"){"Created by and Copyright&copy; Shelvacu Vevevende"}
-			h.span(:id => "donatelink") do
-				h.a(:href => "/donate.fgh"){"Donate"}
+			h.div(:id => "bottombar") do
+			h.span(:id => "copy"){"Created by and Copyright&copy; Shelvacu Vevevende"}
+				h.span(:id => "donatelink") do
+					h.a(:href => "/donate.fgh"){"Donate"}
+				end
 			end
 		end
 	end
@@ -223,7 +225,14 @@ get '/verify.fgh' do
 				if user[:veri]
 					h.h1{"Already verified"}
 				else
-				
+					DB[:users].where(:id => user[:id]).update(:veri => true)
+					h.h2{"You have successfully been verified"}
+					unless session[:logged]
+						h.h4 do
+							h << "You may want to "
+							h.a(:href => "/login.fgh"){"Login"}
+						end
+					end
 				end
 			end
 		end
