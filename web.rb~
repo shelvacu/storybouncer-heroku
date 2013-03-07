@@ -6,6 +6,7 @@ require 'pony'
 require 'pp'
 enable :sessions
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
+set :show_exceptions, false
 DB =  Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
 Pony.options = {
   :via => :smtp,
@@ -30,6 +31,7 @@ def valid_username?(name)
 end
 def makehtml#(&block)
 	h = HTMLMaker.new
+	h << "<!DOCTYPE html>\n"
 	h.html{yield h}#block.call(h)}
 	return h.to_s
 end
@@ -46,10 +48,16 @@ def template(pagename="missing title!",js = [],css = [],&block)
 			end
 		end
 		h.body do
-			block.call(h)
-			h.span(:id => "copy"){"Created by and Copyright&copy; Shelvacu Vevevende"}
-			h.span(:id => "donatelink") do
-				h.a(:href => "/donate.fgh"){"Donate"}
+			h.div(:id => 'main'){
+				block.call(h)
+			}
+			h.div(:id => "bottombar") do
+				h.div(:id => "innerbottombar") do
+					h.span(:id => "copy"){"Created by and Copyright&copy; Shelvacu Vevevende"}
+					h.span(:id => "donatelink") do
+						h.a(:href => "/donate.fgh"){"Donate"}
+					end
+				end
 			end
 		end
 	end
@@ -67,6 +75,12 @@ get '/' do
 		end
 	end
 	$h.to_s
+end
+
+get '/test.fgh' do
+	template("Template tester 0.1") do |h|
+		h.span{"This stuff appears inside the template!"}
+	end
 end
 
 get '/register.fgh' do

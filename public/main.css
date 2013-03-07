@@ -1,18 +1,24 @@
-*{
+*{ /*t r b l; t rl b; tb rl; tbrl*/
 	margin-left:auto;
 	margin-right:auto;
 }
-body{
+#main{
 	margin-left:20px;
 }
 #bottombar{
 	width:100%;
-	margin-bottom:15px;
+	padding:5px 0px 15px;
 	position:absolute;
 	bottom:0px;
 	color:white;
 	background-color:black;
 	border-top:2px solid gray;
+
+}
+#innerbottombar{
+	margin-left:10px;
+	margin-right:10px;
+	position:relative;
 }
 #copy{
 	font-size:small;
@@ -21,5 +27,4 @@ body{
 #donatelink{
 	position:absolute;
 	right:0px;
-	margin-right:10px;
 }
