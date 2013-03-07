@@ -197,7 +197,7 @@ post '/login.fgh' do
 		end
 	elsif DB[:users].where(:username => params[:username]).empty?
 		ret = template('Username Incorrect'){|h| h.h2{"Username incorrect"}}
-	elsif DB[:users].where(:username => params[:username],:password => Digest::MD5.hexdigest(params[:password]) ).empty?
+	elsif DB[:users].where(:username => params[:username],:pass => Digest::MD5.hexdigest(params[:password]) ).empty?
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
 		userdata = DB[:users].where(:username => params[:username],:password => Digest::MD5.hexdigest(params[:password]) ).all[0]

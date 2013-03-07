@@ -200,7 +200,7 @@ post '/login.fgh' do
 	elsif DB[:users].where(:username => params[:username],:pass => Digest::MD5.hexdigest(params[:password]) ).empty?
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
-		userdata = DB[:users].where(:username => params[:username],:password => Digest::MD5.hexdigest(params[:password]) ).all[0]
+		userdata = DB[:users].where(:username => params[:username],:pass => Digest::MD5.hexdigest(params[:password]) ).all[0]
 		session[:logged] = true
 		session[:username] = userdata[:username]
 		session[:userid] = userdata[:id]
