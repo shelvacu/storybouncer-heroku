@@ -223,7 +223,14 @@ get '/verify.fgh' do
 				if user[:veri]
 					h.h1{"Already verified"}
 				else
-				
+					DB[:users].where(:id => user[:id]).update(:veri => true)
+					h.h2{"You have successfully been verified"}
+					unless session[:logged]
+						h.h4 do
+							h << "You may want to "
+							h.a(:href => "/login.fgh"){"Login"}
+						end
+					end
 				end
 			end
 		end

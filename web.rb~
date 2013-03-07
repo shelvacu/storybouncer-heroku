@@ -165,6 +165,8 @@ get '/login.fgh' do
 				h.br
 				h << "Password:"
 				h.input(:type => "password",:name => "password")
+				h.br
+				h.input(:type => "submit")
 			end
 		end
 	end
