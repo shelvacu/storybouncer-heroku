@@ -62,6 +62,14 @@ def template(pagename="missing title!",js = [],css = [],&block)
 		end
 	end
 end
+error do
+	err = env['sinatra.error']
+	Pony.mail(	:from => "error@protected-brushlands-7337.herokuapp.com",:to => "shelvacu@gmail.com", :subject => err.class.to_s,
+				:body => "Current session:#{session.inspect}\n#{err.message}\n\n#{err.backtrace.join("\n")}" )
+	template("Error") do |h|
+		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
+	end
+end
 get '/' do
 	$h = HTMLMaker.new
 	$h.html do
@@ -131,7 +139,7 @@ post '/register.fgh' do
 					e.a(:href => verify_link){"Here"}
 					e.span{"To verify your account. <br />Alternatively, use the key \"#{email_verify_key}\" at #{$site_name}/verify.fgh"}
 				end
-				Pony.mail(	:from => "admin@protected-brushlands-7337.herokuapp.com",:to => params[:email],
+				Pony.mail(	:from => "no-reply@protected-brushlands-7337.herokuapp.com",:to => params[:email],
 							:subject => "your new account!", :html_body => e.to_s, 
 							:body => "Please copy+paste this url into your browser: #{verify_link}\n\nOr, go to #{$site_name}/verify.fgh and enter the code #{email_verify_key.inspect}")
 				h.h2{"Success :D"}
