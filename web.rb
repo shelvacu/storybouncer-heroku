@@ -152,15 +152,18 @@ end
 
 get '/donate.fgh' do
 	template("Donate!") do |h|
-		h.div{"You have two options for donating:"}
-		h.div do
-			h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
-			h << File.read('./SiteDonatebutton')
-		end
-		#h.hr
-		h.div do
-			h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
-			h << File.read('./Donatebutton')
+		h.style{"li{margin:5px;}ul{width:400px}"}
+		h.h4(:style => 'width:300px;'){"You have two options for donating:"}
+		h.ul do
+			h.li do
+				h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
+				h << File.read('./SiteDonatebutton')
+			end
+			
+			h.li do
+				h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
+				h << File.read('./Donatebutton')
+			end
 		end
 	end
 end
