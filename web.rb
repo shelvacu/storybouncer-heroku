@@ -53,10 +53,10 @@ def template(pagename="missing title!",js = [],css = [],&block)
 			}
 			h.div(:id => "bottombar") do
 				h.div(:id => "innerbottombar") do
-					h.span(:id => "copy"){"Created by and Copyright&copy; Shelvacu Vevevende"}
-					h.span(:id => "donatelink") do
-						h.a(:href => "/donate.fgh"){"Donate"}
-					end
+					h.span(:id => "copy"){"Created by and Copyright &copy; Shelvacu Vevevende"}
+					#h.span(:id => "donatelink") do
+					h.a(:id => "donatelink",:href => "/donate.fgh"){"Donate"}
+					#end
 				end
 			end
 		end
@@ -157,7 +157,7 @@ get '/donate.fgh' do
 			h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
 			h << File.read('./SiteDonatebutton')
 		end
-		h.hr
+		#h.hr
 		h.div do
 			h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
 			h << File.read('./Donatebutton')

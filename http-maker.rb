@@ -33,7 +33,8 @@ class HTMLMaker
 	end
 	
 	def <<(stuff)
-		@currentHTML += String.try_convert(stuff).to_s
+		@currentHTML += stuff.to_s
+		return nil
 	end
 	
 	def to_s;@currentHTML;end

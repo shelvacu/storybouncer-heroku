@@ -18,6 +18,7 @@
 #innerbottombar{
 	margin-left:10px;
 	margin-right:10px;
+	position:relative;
 }
 #copy{
 	font-size:small;
@@ -27,3 +28,6 @@
 	position:absolute;
 	right:0px;
 }
+#donatelink:link {color:#3366FF;}      /* unvisited link */
+#donatelink:visited {color:#9933FF;}  /* visited link */
+#donatelink:hover {color:#9933FF;font-weight:bold;}  /* mouse over link */
