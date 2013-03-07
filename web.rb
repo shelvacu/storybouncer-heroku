@@ -70,6 +70,15 @@ error do
 		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
 	end
 end
+error 404 do
+	template('Not Found') do |h|
+		h.h1{"Oh noes! 404 Not found"}
+		h.h6 do
+			h << "Monkeys stole the page you were looking for. Perhaps you want to go "
+			h.a(:href => '/'){"HOME?"}
+		end
+	end
+end
 get '/' do
 	$h = HTMLMaker.new
 	$h.html do
@@ -262,9 +271,9 @@ get '/verify.fgh' do
 	end
 end
 
-get '/except.fgh' do
-	this_is_not_a_real_method_and_will_raise_an_error
-end
+#get '/except.fgh' do
+#	this_is_not_a_real_method_and_will_raise_an_error
+#end
 
 
 
