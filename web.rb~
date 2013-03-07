@@ -153,7 +153,7 @@ end
 get '/donate.fgh' do
 	template("Donate!") do |h|
 		h.style{"li{margin:5px;}ul{width:400px}"}
-		h.h4(:style => 'width:auto;'){"You have two options for donating:"}
+		h.h4(:style => 'width:300px;'){"You have two options for donating:"}
 		h.ul do
 			h.li do
 				h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
