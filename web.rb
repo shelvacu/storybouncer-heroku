@@ -1,13 +1,13 @@
 require 'sinatra'
 require 'digest/md5'
 require './html-maker'
-require 'sequel'
+require './local_sequel'
 require 'pony'
 require 'pp'
 enable :sessions
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 set :show_exceptions, false
-DB =  Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
+
 Pony.options = {
   :via => :smtp,
   :via_options => {
@@ -48,6 +48,16 @@ def template(pagename="missing title!",js = [],css = [],&block)
 			end
 		end
 		h.body do
+			h.div(:id => 'topbar') do
+				h.span(:id => 'stateinfo') do
+					if session[:logged]
+						h << "#{session[:username]} | "
+						h.a(:href => '/usercp.fgh'){"UserCP"}
+					else
+						h.a(:href => '/login.fgh'){"Login"}
+					end
+				end
+			end
 			h.div(:id => 'main'){
 				block.call(h)
 			}
@@ -270,6 +280,15 @@ get '/verify.fgh' do
 		end
 	end
 end
+=begin
+get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
+	error 404 if params[:id].nil?
+	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
+	book = DB[:books].where(:id => params[:id]).all.first
+	paras
+	
+end
+=end
 
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
