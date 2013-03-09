@@ -28,7 +28,7 @@ end
 
 DB.alter_table :names do
 	[:upvotes,:downvotes].each{|o| 
-		drop_column o
+		drop_column o if DB[:names].columns.include?(o)
 		add_column o,String
 	}
 end

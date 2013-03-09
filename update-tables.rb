@@ -1,5 +1,5 @@
 require './local_sequel'
-
+=begin
 DB.alter_table :users do
 	#drop_column :vparas
 	#drop_column :vbooks
@@ -25,7 +25,7 @@ DB.alter_table :books do
 	end
 	[:upvotes,:downvotes].each{|o| add_column o,String}
 end
-
+=end
 DB.alter_table :names do
 	[:upvotes,:downvotes].each{|o| 
 		drop_column o if DB[:names].columns.include?(o)
