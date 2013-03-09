@@ -1,9 +1,9 @@
 require './local_sequel'
 
 DB.alter_table :users do
-	drop_column :vparas
-	drop_column :vbooks
-	drop_column :vnames
+	#drop_column :vparas
+	#drop_column :vbooks
+	#drop_column :vnames
 end
 
 DB.alter_table :paras do
@@ -15,7 +15,7 @@ DB.alter_table :paras do
 	set_column_default :newchap, false
 	#set_column_default :chapname, ""
 	set_column_default :endchap, false
-	drop_column :chapnum
+	#drop_column :chapnum
 end
 
 DB.alter_table :books do
