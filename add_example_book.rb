@@ -29,5 +29,5 @@ paraids = []
 raw_paras.each do |row_hash|
 	paraids << row_hash[:id]
 end
-DB[:books].where(:bookid => bookid).update(:paras => raw_paras.join(','))
+DB[:books].where(:id => bookid).update(:paras => raw_paras.join(','))
 puts 'done!'
