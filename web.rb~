@@ -280,7 +280,7 @@ get '/verify.fgh' do
 		end
 	end
 end
-
+=begin
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	error 404 if params[:id].nil?
 	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
@@ -288,6 +288,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	paras
 	
 end
+=end
 
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
