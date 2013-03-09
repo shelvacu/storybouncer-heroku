@@ -23,9 +23,12 @@ DB.alter_table :books do
 		drop_column o
 		add_column o,String
 	end
-	[:upvotes,:downvotes].each{|o| create_table o}
+	[:upvotes,:downvotes].each{|o| add_column o,String}
 end
 
 DB.alter_table :names do
-	[:upvotes,:downvotes].each{|o| create_table o}
+	[:upvotes,:downvotes].each{|o| 
+		drop_column o
+		add_column o,String
+	}
 end
