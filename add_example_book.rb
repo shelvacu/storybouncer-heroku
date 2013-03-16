@@ -1,7 +1,7 @@
 require './local_sequel'
 
-DB[:users].insert(	:username => "*TEST*", :pass => "666", #note that this is the 'md5' hash, hence any password entered will never match. :D
-					:email => "testemail",:emailver => "wq23iujt4erofd9wu3rj4k5rotf09ifer43erfd09iknr", :veri => true)
+#DB[:users].insert(	:username => "*TEST*", :pass => "666", #note that this is the 'md5' hash, hence any password entered will never match. :D
+#					:email => "testemail",:emailver => "wq23iujt4erofd9wu3rj4k5rotf09ifer43erfd09iknr", :veri => true)
 dataset= DB[:users].where(:username => "*TEST*")
 userid = dataset.all[0][:id]
 =begin
@@ -22,7 +22,7 @@ chaps.each do |name, paras|
 	firstpara = paras.shift
 	DB[:paras].insert(:bookid => bookid,:userid => userid,:an => authors_note,:text => firstpara, :chapname => name, :newchap => true)
 	paras.each do |text|
-		DB[:paras].insert(:bookid => bookid,:userid => userid,:an => authors_note,:text => firstpara, :chapname => name)
+		DB[:paras].insert(:bookid => bookid,:userid => userid,:an => authors_note,:text => text, :chapname => name)
 	end
 end
 raw_paras = DB[:paras].where(:bookid => bookid).all
