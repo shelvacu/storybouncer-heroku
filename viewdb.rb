@@ -4,10 +4,10 @@ DB.tables.each do |t_name|
 	puts t_name.inspect
 	#pp DB[t_name].all
 	lengths = {}
+	DB[t_name].columns.each{|col_name| lengths[col_name] = col_name.length}
 	DB[t_name].all.each do |row|
 		row.each do |key,val|
-			lengths[key] ||= key.length
-			lengths[key] = val.to_s.length if val.to_s.length > lenghts[key]
+			lengths[key] = val.to_s.length if val.to_s.length > lengths[key]
 		end
 	end
 	pp lengths
