@@ -203,7 +203,7 @@ get '/donate.fgh' do
 			h.li do
 				h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
 				h << File.read('./Donatebutton')
-			endtemplat
+			end#templat
 		end
 	end
 end

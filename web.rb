@@ -308,7 +308,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	all_paras = DB[:paras].where(:id => paraids).all
 	chap_num = 1
 	paras = []
-	
+	chapname = 'nothing?'
 	all_paras.each do |parainfo|
 		chap_num += 1 if parainfo[:newchap]
 		paras << parainfo[:text] if chap_num == params[:chap]
