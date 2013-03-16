@@ -1,9 +1,14 @@
 *{ /*t r b l; t rl b; tb rl; tbrl*/
 	margin-left:auto;
 	margin-right:auto;
+	font-family:sans-serif;
+}
+body{
+	background-color:#B2B2FF;
 }
 #main{
 	margin-left:20px;
+	background-color:#000;
 }
 #bottombar{
 	width:100%;
@@ -30,4 +35,17 @@
 }
 #donatelink:link {color:#3366FF;}      /* unvisited link */
 #donatelink:visited {color:#9933FF;}  /* visited link */
-#donatelink:hover {color:#9933FF;font-weight:bold;}  /* mouse over link */
+#donatelink:hover {font-weight:bold;}  /* mouse over link */
+
+/* stuff for book/view.fgh */
+.nextcontainer .prevcontainer{
+	height:100%;
+	position:relative;
+}
+.bottomNextButton .bottomPrevButton{
+	position:absolute;
+	bottom:5px;
+}
+.bottomNextButton .bottomPrevButton .topNextButton .topPrevButton{
+	background-color:
+}

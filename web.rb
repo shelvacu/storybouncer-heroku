@@ -4,6 +4,7 @@ require './html-maker'
 require './local_sequel'
 require 'pony'
 require 'pp'
+require 'cgi' #SOOO MANY LIBRARIEZZZZZ!
 enable :sessions
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 set :show_exceptions, false
@@ -177,6 +178,9 @@ post '/register.fgh' do
 	end
 end
 
+get '/colors.fgh' do
+
+
 get '/donate.fgh' do
 	template("Donate!") do |h|
 		h.style{"li{margin:5px;}ul{width:400px}"}
@@ -190,7 +194,7 @@ get '/donate.fgh' do
 			h.li do
 				h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
 				h << File.read('./Donatebutton')
-			end
+			endtemplat
 		end
 	end
 end
@@ -280,15 +284,63 @@ get '/verify.fgh' do
 		end
 	end
 end
-=begin
+#=begin
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	error 404 if params[:id].nil?
-	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
-	book = DB[:books].where(:id => params[:id]).all.first
-	paras
+	params[:id] = params[:id].to_i
 	
+	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
+	params[:chap] = 1 if params[:chap].nil?
+	params[:chap] = params[:chap].to_i
+	
+	book = DB[:books].where(:id => params[:id]).all.first
+	paraids = book[:paras].split(',')
+	paraids.collect!{|a| a.to_i}
+	all_paras = DB[:paras].where(:id => paraids).all
+	chap_num = 1
+	paras = []
+	
+	all_paras.each do |parainfo|
+		chap_num += 1 if parainfo[:newchap]
+		paras << parainfo[:text] if chap_num == params[:chap]
+		chapname = parainfo[:chapname]
+	end
+	if book[:name].nil?
+		name = 'book of awesome'
+	else
+		name = book[:name]
+	end
+	
+	template("#{name} - Storybouncer") do |h|
+		if params[:chap] > 1
+			h.div(:class => 'prevContainer') do
+				['top','bottom'].each { |s|
+					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] - 1}",:id => '#{s}PrevButton'){"Prev"}
+				}
+			end
+		else
+			h.div(:class => 'spacefiller'){}
+		end
+		h.div(:id => 'storybody') do
+			h.h2{CGI.escapeHTML(chapname)}
+			h.br
+			paras.each do |para|
+				h.div(:class => 'paratext'){para}
+				h.br
+			end
+		end
+		if params[:chap] < chap_num
+			h.div(:class => 'nextContainer') do
+				['top','bottom'].each { |s|
+					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] + 1}",:id => '#{s}NextButton'){"Next"}
+				}
+			end
+		else
+			h.div(:class => 'spacefiller'){}
+		end
+	end
 end
-=end
+#=end
 
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
