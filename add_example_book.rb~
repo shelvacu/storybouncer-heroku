@@ -1,7 +1,7 @@
 require './local_sequel'
 
-#DB[:users].insert(	:username => "*TEST*", :pass => "666", #note that this is the 'md5' hash, hence any password entered will never match. :D
-#					:email => "testemail",:emailver => "wq23iujt4erofd9wu3rj4k5rotf09ifer43erfd09iknr", :veri => true)
+DB[:users].insert(	:username => "*TEST*", :pass => "666", #note that this is the 'md5' hash, hence any password entered will never match. :D
+					:email => "testemail",:emailver => "wq23iujt4erofd9wu3rj4k5rotf09ifer43erfd09iknr", :veri => true)
 dataset= DB[:users].where(:username => "*TEST*")
 userid = dataset.all[0][:id]
 =begin
