@@ -12,7 +12,7 @@ DB.tables.each do |t_name|
 	end
 	print '|'
 	DB[t_name].columns.each do |col_name|
-		print col_name.center(lengths[col_name]) + '|'
+		print col_name.to_s.center(lengths[col_name]) + '|'
 	end
 	puts
 	DB[t_name].all.each do |row|
