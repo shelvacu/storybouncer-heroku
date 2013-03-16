@@ -178,6 +178,9 @@ post '/register.fgh' do
 	end
 end
 
+get '/colors.fgh' do
+
+
 get '/donate.fgh' do
 	template("Donate!") do |h|
 		h.style{"li{margin:5px;}ul{width:400px}"}
@@ -191,7 +194,7 @@ get '/donate.fgh' do
 			h.li do
 				h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
 				h << File.read('./Donatebutton')
-			end
+			endtemplat
 		end
 	end
 end

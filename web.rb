@@ -179,7 +179,16 @@ post '/register.fgh' do
 end
 
 get '/colors.fgh' do
-
+	template('C0L0RZ!') do |h|
+		'0369cf'.split('').each do |a|
+			'0369cf'.split('').each do |b|
+				'0369cf'.split('').each do |c|
+					h.div(:style => 'background-color:#{a}#{b}#{c}'){a+b+c}
+				end
+			end
+		end
+	end
+end
 
 get '/donate.fgh' do
 	template("Donate!") do |h|
