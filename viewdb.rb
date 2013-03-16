@@ -10,7 +10,7 @@ DB.tables.each do |t_name|
 			lengths[key] = val.to_s.length if val.to_s.length > lengths[key]
 		end
 	end
-	pp lengths
+	#pp lengths
 	print '|'
 	DB[t_name].columns.each do |col_name|
 		print col_name.to_s.center(lengths[col_name]) + '|'
@@ -23,4 +23,7 @@ DB.tables.each do |t_name|
 		end
 		puts
 	end
+	puts
+	puts
+	puts
 end
