@@ -38,7 +38,7 @@ body{
 #donatelink:hover {font-weight:bold;}  /* mouse over link */
 
 /* stuff for book/view.fgh */
-.nextcontainer .prevcontainer{
+.nextContainer .prevContainer{
 	height:100%;
 	position:relative;
 }
