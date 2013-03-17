@@ -8,7 +8,7 @@ body{
 }
 #main{
 	margin-left:20px;
-	background-color:#000;
+	background-color:#fff;
 }
 #bottombar{
 	width:100%;
@@ -47,5 +47,6 @@ body{
 	bottom:5px;
 }
 .bottomNextButton .bottomPrevButton .topNextButton .topPrevButton{
-	background-color:
+	background-color:#00004C;
+	color:#00004C;
 }
