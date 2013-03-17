@@ -40,10 +40,10 @@ body{
 /* stuff for book/view.fgh */
 .nextContainer,.prevContainer{
 	height:100%;
-	position:absolute;
+	position:relative;
 }
 #bottomNextButton,#bottomPrevButton{
-	position:relative;
+	position:absolute;
 	bottom:5px;
 }
 #bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
