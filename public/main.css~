@@ -40,13 +40,14 @@ body{
 /* stuff for book/view.fgh */
 .nextContainer .prevContainer{
 	height:100%;
-	position:relative;
-}
-#bottomNextButton #bottomPrevButton{
 	position:absolute;
+}
+#bottomNextButton,#bottomPrevButton{
+	position:relative;
 	bottom:5px;
 }
-#bottomNextButton #bottomPrevButton #topNextButton #topPrevButton{
-	background-color:#00004C;
+#bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
+	background-color:#9999FF;
 	color:#00004C;
+	border:2px solid black;
 }

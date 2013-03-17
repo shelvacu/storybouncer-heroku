@@ -38,15 +38,16 @@ body{
 #donatelink:hover {font-weight:bold;}  /* mouse over link */
 
 /* stuff for book/view.fgh */
-.nextContainer .prevContainer{
+.nextContainer,.prevContainer{
 	height:100%;
-	position:relative;
+	position:absolute;
 }
 #bottomNextButton,#bottomPrevButton{
-	position:absolute;
+	position:relative;
 	bottom:5px;
 }
 #bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
-	background-color:#00004C;
+	background-color:#9999FF;
 	color:#00004C;
+	border:2px solid black;
 }
