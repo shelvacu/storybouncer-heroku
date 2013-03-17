@@ -324,7 +324,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 		if params[:chap] > 1
 			h.div(:class => 'prevContainer') do
 				['top','bottom'].each { |s|
-					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] - 1}",:id => '#{s}PrevButton'){"Prev"}
+					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] - 1}",:id => "#{s}PrevButton"){"Prev"}
 				}
 			end
 		else
@@ -341,7 +341,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 		if params[:chap] < chap_num
 			h.div(:class => 'nextContainer') do
 				['top','bottom'].each { |s|
-					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] + 1}",:id => '#{s}NextButton'){"Next"}
+					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] + 1}",:id => "#{s}NextButton"){"Next"}
 				}
 			end
 		else
