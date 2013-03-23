@@ -59,8 +59,10 @@ def template(pagename="missing title!",js = [],css = [],&block)
 					end
 				end
 			end
-			h.div(:id => 'main'){
-				block.call(h)
+			h.div(:id => 'mainContainer'){
+				h.div(:id => 'main'){
+					block.call(h)
+				}
 			}
 			h.div(:id => "bottombar") do
 				h.div(:id => "innerbottombar") do
@@ -216,14 +218,25 @@ get '/login.fgh' do
 				h.a(:href => "/logout.fgh"){"logout?"}
 			end
 		else
-			h.form(:method => "post") do
-				h << "Username:"
-				h.input(:type => "text",:name => "username")
-				h.br
-				h << "Password:"
-				h.input(:type => "password",:name => "password")
-				h.br
-				h.input(:type => "submit")
+			h.form(:method => "post", :id => "loginForm") do
+				h.table do
+				h.tbody do
+					h.tr do
+						h.td{ h.span(:class => 'stuffdoer'){"Username:"} }
+						h.td{ h.input(:type => "text",:name => "username",:id => "usernameBox") }
+					end
+					h.tr do
+						h.td{ h.span(:class => 'stuffdoer'){"Password:"} }
+						h.td{ h.input(:type => "password",:name => "password") }
+					end
+					h.tr do
+						h.td{ h.input(:type => "submit") }
+					end
+				end
+				end
+			end
+			h.script(:type => 'text/javascript') do
+				h << "document.getElementById('usernameBox').focus();"
 			end
 		end
 	end

@@ -6,8 +6,13 @@
 body{
 	background-color:#B2B2FF;
 }
+#mainContainer{
+	text-align:center;
+}
 #main{
-	margin-left:20px;
+	/*margin-left:20px;*/
+	display:inline-block;
+	border:5px outset #00A;
 	background-color:#fff;
 }
 #bottombar{
@@ -29,6 +34,9 @@ body{
 	font-size:small;
 	/*font-color:gray;*/
 }
+#loginForm{
+	padding:10px;
+}
 #donatelink{
 	position:absolute;
 	right:0px;
@@ -37,6 +45,8 @@ body{
 #donatelink:visited {color:#9933FF;}  /* visited link */
 #donatelink:hover {font-weight:bold;}  /* mouse over link */
 
+/*login.fg*/
+.stuffdoer{font-family:monospace;}
 /* stuff for book/view.fgh */
 .nextContainer,.prevContainer{
 	height:100%;
