@@ -21,9 +21,10 @@ body{
 	background-color:#001;
 	color:#11F;
 }
-#stateinfo:active{
-	color:#1F1;
-}
+#stateinfo:link{color:#3366FF;}
+#stateinfo:visited{color:#9933FF;}
+#stateinfo:hover {font-weight:bold}
+#stateinfo:active{color:#1F1;}
 #bottombar{
 	width:100%;
 	padding:5px 0px 15px;
@@ -50,9 +51,10 @@ body{
 	position:absolute;
 	right:0px;
 }
-#donatelink:link {color:#3366FF;}      /* unvisited link */
-#donatelink:visited {color:#9933FF;}  /* visited link */
-#donatelink:hover {font-weight:bold;}  /* mouse over link */
+#donatelink:link   {color:#3366FF;}      /* unvisited link */
+#donatelink:visited{color:#9933FF;}  /* visited link */
+#donatelink:hover  {font-weight:bold;}  /* mouse over link */
+#donatelink:active {color:#11FF11;}  /* link is being clicked on */
 
 /*login.fg*/
 .stuffdoer{

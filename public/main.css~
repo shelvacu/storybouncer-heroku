@@ -21,7 +21,9 @@ body{
 	background-color:#001;
 	color:#11F;
 }
-a#stateinfo
+#stateinfo:active{
+	color:#1F1;
+}
 #bottombar{
 	width:100%;
 	padding:5px 0px 15px;
