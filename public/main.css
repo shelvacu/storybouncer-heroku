@@ -14,6 +14,15 @@ body{
 	display:inline-block;
 	border:5px outset #00A;
 	background-color:#fff;
+	padding:10px;
+}
+#stateinfo{
+	margin:3px 5px 3px auto;
+	background-color:#001;
+	color:#11F;
+}
+#stateinfo:active{
+	color:#1F1;
 }
 #bottombar{
 	width:100%;
@@ -46,7 +55,10 @@ body{
 #donatelink:hover {font-weight:bold;}  /* mouse over link */
 
 /*login.fg*/
-.stuffdoer{font-family:monospace;}
+.stuffdoer{
+	font-family:monospace;
+	font-size:13.5px;
+}
 /* stuff for book/view.fgh */
 .nextContainer,.prevContainer{
 	height:100%;
