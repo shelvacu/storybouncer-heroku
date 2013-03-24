@@ -31,6 +31,7 @@ body{
 #stateinfo:active{color:#1F1;}
 #topbar{
 	position:relative;
+	text-align:center;
 }
 #bottombar{
 	width:100%;

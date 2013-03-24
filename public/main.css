@@ -32,6 +32,7 @@ body{
 #topbar{
 	position:relative;
 	text-align:center;
+	margin-bottom:10px;
 }
 #bottombar{
 	width:100%;
