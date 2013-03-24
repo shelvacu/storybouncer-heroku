@@ -278,7 +278,7 @@ end
 
 get '/usercp.fgh' do
 	template("UserCP") do |h|
-		if session[logged]
+		if session[:logged]
 			userinfo = DB[:users].where(:username => session[:username]).limit(1).all
 			#h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
 			h.table do

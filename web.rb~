@@ -279,10 +279,44 @@ end
 get '/usercp.fgh' do
 	template("UserCP") do |h|
 		if session[logged]
-			h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
+			userinfo = DB[:users].where(:username => session[:username]).limit(1).all
+			#h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
+			h.table do
+				h.tr do
+					h.td{"Username:"}
+					h.td{userinfo[:username]}
+				end
+				h.tr do
+					h.td{"Password:"}
+					h.td{"TODO - Reset"}
+				end
+				h.tr do
+					h.td{"Email:"}
+					h.td{userinfo[:email]}
+				end
+				h.tr do
+					h.td{"Auth level:"}
+					h.td{{0 => 'User',1 => 'Mod',2 => 'Admin',3 => 'Owner'}[userinfo[:auth]]}
+				end
+				h.tr do
+					h.td{"Email Verified?:"}
+					h.td{(userinfo[:veri] ? 'Yes' : 'No')}
+				end
+				h.tr do
+					h.td{"Ban release date:"}
+					h.td do
+						if userinfo[:ban] > Time.now
+							userinfo[:ban].strftime("%H:%Mhrs on %B %e, %Y")
+						else
+							"Not banned!"
+						end
+					end
+				end
+			end
 		else
 			h.span{"You are not logged in. &nbsp;"}
 			h.a(:href => '/login.fgh'){"Login?"}
+		end
 	end
 end
 
