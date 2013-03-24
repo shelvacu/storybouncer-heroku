@@ -50,6 +50,7 @@ def template(pagename="missing title!",js = [],css = [],&block)
 		end
 		h.body do
 			h.div(:id => 'topbar') do
+				h.img(:id => "toplogo",:src => '/smalllogo.gif')
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
 						h << "#{session[:username]} | "
@@ -95,9 +96,13 @@ end
 get '/' do
 	$h = HTMLMaker.new
 	$h.html do
-		$h.head{$h.title{"Awesomeness?"}}
+		$h.head{
+			$h.title{"Storybouncer!"}
+			$h.style{"img{margin:0px auto}"}	
+		}
 		$h.body do
-			$h.h1(:id => 'awesome'){"The book game! Currently in development"}
+			$h.img(:src => '/logo.gif')
+			$h.h1(:id => 'awesome'){"Currently in development"}
 			#$h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
 			if rand(2) == 0
 				$h.h1(:style => "font-size:big;"){"It's your lucky day!"}

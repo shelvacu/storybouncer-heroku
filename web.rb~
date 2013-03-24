@@ -95,9 +95,13 @@ end
 get '/' do
 	$h = HTMLMaker.new
 	$h.html do
-		$h.head{$h.title{"Awesomeness?"}}
+		$h.head{
+			$h.title{"Storybouncer!"}
+			$h.style{"img{margin:0px auto}"}	
+		}
 		$h.body do
-			$h.h1(:id => 'awesome'){"The book game! Currently in development"}
+			$h.img(:src => '/logo.gif')
+			$h.h1(:id => 'awesome'){"Currently in development"}
 			#$h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
 			if rand(2) == 0
 				$h.h1(:style => "font-size:big;"){"It's your lucky day!"}
@@ -222,11 +226,11 @@ get '/login.fgh' do
 				h.table do
 				h.tbody do
 					h.tr do
-						h.td{ "Username:" }
+						h.td{ h.span(:class => 'stuffdoer'){"Username:"} }
 						h.td{ h.input(:type => "text",:name => "username",:id => "usernameBox") }
 					end
 					h.tr do
-						h.td{ "Password:" }
+						h.td{ h.span(:class => 'stuffdoer'){"Password:"} }
 						h.td{ h.input(:type => "password",:name => "password") }
 					end
 					h.tr do
