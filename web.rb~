@@ -36,6 +36,7 @@ def makehtml#(&block)
 	h.html{yield h}#block.call(h)}
 	return h.to_s
 end
+#blarg
 def template(pagename="missing title!",js = [],css = [],&block)
 	css << '/main.css'
 	return makehtml do |h|

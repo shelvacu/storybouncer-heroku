@@ -276,7 +276,7 @@ get '/logout.fgh' do
 	template('Logged out'){|h| h.h2{"Successfully logged out"}}
 end
 
-get '/userinfo.fgh' do
+get '/usercp.fgh' do
 	template("UserCP") do |h|
 		h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
 	end
