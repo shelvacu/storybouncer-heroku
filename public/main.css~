@@ -19,7 +19,7 @@ body{
 #stateinfo{
 	margin:3px 5px 3px auto;
 	background-color:#001;
-	color:#11F;
+	color:#FFF;
 }
 #stateinfo:link{color:#3366FF;}
 #stateinfo:visited{color:#9933FF;}

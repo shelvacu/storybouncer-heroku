@@ -25,6 +25,9 @@ body{
 #stateinfo:visited{color:#9933FF;}
 #stateinfo:hover {font-weight:bold}
 #stateinfo:active{color:#1F1;}
+#topbar{
+	position:relative;
+}
 #bottombar{
 	width:100%;
 	padding:5px 0px 15px;
