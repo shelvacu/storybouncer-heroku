@@ -50,6 +50,7 @@ def template(pagename="missing title!",js = [],css = [],&block)
 		end
 		h.body do
 			h.div(:id => 'topbar') do
+				h.img(:id => "toplogo",:src => '/smalllogo.gif')
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
 						h << "#{session[:username]} | "

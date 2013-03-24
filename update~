@@ -1,0 +1,3 @@
+git add .
+git commit -m "I don't like commit messages. Look at the date"
+git push heroku master
