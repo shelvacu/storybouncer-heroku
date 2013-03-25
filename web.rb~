@@ -55,9 +55,9 @@ def template(pagename="missing title!",js = [],css = [],&block)
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
 						h << "#{session[:username]} | "
-						h.a(:href => '/usercp.fgh'){"UserCP"}
+						h.a(:href => '/usercp.fgh', :id => 'managelink'){"UserCP"}
 					else
-						h.a(:href => '/login.fgh'){"Login"}
+						h.a(:href => '/login.fgh', :id => 'managelink'){"Login"}
 					end
 				end
 			end
@@ -284,7 +284,7 @@ get '/usercp.fgh' do
 			h.table do
 				h.tr do
 					h.td(:class => 'left'){"Username:"}
-					h.td{userinfo[:username]}
+					h.td(:class => 'right'){userinfo[:username]}
 				end
 				h.tr do
 					h.td(:class => 'left'){"Password:"}
@@ -391,7 +391,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 			h.h2{CGI.escapeHTML(chapname)}
 			h.br
 			paras.each do |para|
-				h.div(:class => 'paratext'){para}
+				h.p(:class => 'paratext'){para}
 				h.br
 			end
 		end
