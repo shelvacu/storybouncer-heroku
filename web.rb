@@ -121,7 +121,7 @@ end
 
 get '/register.fgh' do
 	template('register') do |h|
-		h.div(:id => "signInBox",:style => "border:3px solid black;") do
+		h.div(:id => "signInBox") do
 			h.form(:method => "post") do
 				h.h3{"Sign up for an account"}
 				
@@ -283,28 +283,28 @@ get '/usercp.fgh' do
 			#h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
 			h.table do
 				h.tr do
-					h.td{"Username:"}
+					h.td(:class => 'left'){"Username:"}
 					h.td{userinfo[:username]}
 				end
 				h.tr do
-					h.td{"Password:"}
-					h.td{"TODO - Reset"}
+					h.td(:class => 'left'){"Password:"}
+					h.td(:class => 'right'){"TODO - Reset"}
 				end
 				h.tr do
-					h.td{"Email:"}
-					h.td{userinfo[:email]}
+					h.td(:class => 'left'){"Email:"}
+					h.td(:class => 'right'){userinfo[:email]}
 				end
 				h.tr do
-					h.td{"Auth level:"}
-					h.td{{0 => 'User',1 => 'Mod',2 => 'Admin',3 => 'Owner'}[userinfo[:auth]]}
+					h.td(:class => 'left'){"Auth level:"}
+					h.td(:class => 'right'){{0 => 'User',1 => 'Mod',2 => 'Admin',3 => 'Owner'}[userinfo[:auth]]}
 				end
 				h.tr do
-					h.td{"Email Verified?:"}
-					h.td{(userinfo[:veri] ? 'Yes' : 'No')}
+					h.td(:class => 'left'){"Email Verified?:"}
+					h.td(:class => 'right'){(userinfo[:veri] ? 'Yes' : 'No')}
 				end
 				h.tr do
-					h.td{"Ban release date:"}
-					h.td do
+					h.td(:class => 'left'){"Ban release date:"}
+					h.td(:class => 'right') do
 						if userinfo[:ban] > Time.now
 							userinfo[:ban].strftime("%H:%Mhrs on %B %e, %Y")
 						else

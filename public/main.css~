@@ -26,12 +26,13 @@ body{
 	border-radius:5px;
 }
 #stateinfo:link{color:#3366FF;}
-#stateinfo:visited{color:#9933FF;}
-#stateinfo:hover {font-weight:bold}
+#stateinfo:visited{color:inherit;}
+/*#stateinfo:hover {font-weight:bold}*/
 #stateinfo:active{color:#1F1;}
 #topbar{
 	position:relative;
 	text-align:center;
+	margin-bottom:10px;
 }
 #bottombar{
 	width:100%;
@@ -83,3 +84,6 @@ body{
 	color:#00004C;
 	border:2px solid black;
 }
+/* usercp.fgh */
+.left {text-align:left;}
+.right{text-align:right;}
