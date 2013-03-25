@@ -284,7 +284,7 @@ get '/usercp.fgh' do
 			h.table do
 				h.tr do
 					h.td(:class => 'left'){"Username:"}
-					h.td{userinfo[:username]}
+					h.td(:class => 'right'){userinfo[:username]}
 				end
 				h.tr do
 					h.td(:class => 'left'){"Password:"}
