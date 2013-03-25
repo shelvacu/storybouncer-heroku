@@ -37,8 +37,8 @@ body{
 #bottombar{
 	width:100%;
 	padding:5px 0px 15px;
-	position:absolute;
-	bottom:0px;
+	/*position:absolute;
+	bottom:0px; //these aren't needed since the element is placed at the bottom of the page anyway*/
 	color:white;
 	background-color:black;
 	border-top:2px solid gray;
@@ -78,6 +78,10 @@ body{
 #bottomNextButton,#bottomPrevButton{
 	position:absolute;
 	bottom:5px;
+}
+#topNextButton,#topPrevButton{
+	position:absolute;
+	top:5px;
 }
 #bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
 	background-color:#9999FF;
