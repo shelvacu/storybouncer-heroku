@@ -84,6 +84,9 @@ body{
 	color:#00004C;
 	border:2px solid black;
 }
+#storybody{
+	float:right;
+}
 /* usercp.fgh */
 .left,
 .right{ padding:5px; }

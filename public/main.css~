@@ -25,10 +25,10 @@ body{
 	border:5px solid black;
 	border-radius:5px;
 }
-#stateinfo:link{color:#3366FF;}
-#stateinfo:visited{color:#3366FF;}
+#managelink:link{color:#3366FF;}
+#managelink:visited{color:#3366FF;}
 /*#stateinfo:hover {font-weight:bold}*/
-#stateinfo:active{color:#1F1;}
+#managelink:active{font-weight:bold;}
 #topbar{
 	position:relative;
 	text-align:center;
