@@ -85,5 +85,7 @@ body{
 	border:2px solid black;
 }
 /* usercp.fgh */
+.left
+.right{ padding:5px; }
 .left {text-align:right;}
 .right{text-align:left;}
