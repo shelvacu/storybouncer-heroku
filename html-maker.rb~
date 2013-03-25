@@ -43,7 +43,7 @@ class HTMLMaker
 		table(*args) do
 			tbody do
 				tr do
-					yield
+					yield self
 				end
 			end
 		end

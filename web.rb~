@@ -352,24 +352,27 @@ get '/verify.fgh' do
 end
 #=begin
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
+	log = ""
 	error 404 if params[:id].nil?
 	params[:id] = params[:id].to_i
 	
 	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
 	params[:chap] = 1 if params[:chap].nil?
 	params[:chap] = params[:chap].to_i
-	
+#log += "Assuming chap##{params[:chap]}\n"	
 	book = DB[:books].where(:id => params[:id]).all.first
 	paraids = book[:paras].split(',')
+#log += "paraids = #{paraids.inspect}\n"
 	paraids.collect!{|a| a.to_i}
+#log += "paraids = #{paraids.inspect}\n"
 	all_paras = DB[:paras].where(:id => paraids).all
 	chap_num = 1
 	paras = []
 	chapname = 'nothing?'
 	all_paras.each do |parainfo|
-		chap_num += 1 if parainfo[:newchap]
 		paras << parainfo[:text] if chap_num == params[:chap]
 		chapname = parainfo[:chapname]
+		chap_num += 1 if parainfo[:newchap]
 	end
 	if book[:name].nil?
 		name = 'book of awesome'

@@ -381,31 +381,39 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	end
 	
 	template("#{name} - Storybouncer") do |h|
-		if params[:chap] > 1
-			h.div(:class => 'prevContainer') do
-				['top','bottom'].each { |s|
-					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] - 1}",:id => "#{s}PrevButton"){"Prev"}
-				}
+		h.singletablerow do
+			h.td do
+				if params[:chap] > 1
+					h.div(:class => 'prevContainer') do
+						['top','bottom'].each { |s|
+							h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] - 1}",:id => "#{s}PrevButton"){"Prev"}
+						}
+					end
+				else
+					h.div(:class => 'spacefiller'){}
+				end
 			end
-		else
-			h.div(:class => 'spacefiller'){}
-		end
-		h.div(:id => 'storybody') do
-			h.h2{CGI.escapeHTML(chapname)}
-			h.br
-			paras.each do |para|
-				h.p(:class => 'paratext'){para}
-				h.br
+			h.td do
+				h.div(:id => 'storybody') do
+					h.h2{CGI.escapeHTML(chapname)}
+					h.br
+					paras.each do |para|
+						h.p(:class => 'paratext'){para}
+						h.br
+					end
+				end
 			end
-		end
-		if params[:chap] < chap_num
-			h.div(:class => 'nextContainer') do
-				['top','bottom'].each { |s|
-					h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] + 1}",:id => "#{s}NextButton"){"Next"}
-				}
+			h.td do
+				if params[:chap] < chap_num
+					h.div(:class => 'nextContainer') do
+						['top','bottom'].each { |s|
+							h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] + 1}",:id => "#{s}NextButton"){"Next"}
+						}
+					end
+				else
+					h.div(:class => 'spacefiller'){}
+				end
 			end
-		else
-			h.div(:class => 'spacefiller'){}
 		end
 	end
 end
