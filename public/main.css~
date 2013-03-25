@@ -15,6 +15,7 @@ body{
 	border:5px outset #00A;
 	background-color:#fff;
 	padding:10px;
+	margin:100px;
 }
 #stateinfo{
 	margin:3px 5px 3px auto;
@@ -78,6 +79,10 @@ body{
 #bottomNextButton,#bottomPrevButton{
 	position:absolute;
 	bottom:5px;
+}
+#topNextButton,#topPrevButton{
+	position:absolute;
+	top:5px;
 }
 #bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
 	background-color:#9999FF;
