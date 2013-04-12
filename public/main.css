@@ -77,6 +77,9 @@ body{
 	position:relative;
 	vertical-align:top;
 }
+.spacefiller{
+	width:50px;
+}
 #bottomNextButton,#bottomPrevButton{
 	position:absolute;
 	bottom:0px;
@@ -92,6 +95,8 @@ body{
 	border:2px solid black;
 }
 #storybody{
+	margin-top:25px;
+	margin-bottom:25px;
 }
 /* usercp.fgh */
 .left,

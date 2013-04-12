@@ -77,9 +77,13 @@ body{
 	position:relative;
 	vertical-align:top;
 }
+.spacefiller{
+	width:50px;
+}
 #bottomNextButton,#bottomPrevButton{
 	position:absolute;
-	bottom:5px;
+	bottom:0px;
+	left:0px;
 }
 #topNextButton,#topPrevButton{
 	/*position:absolute;
