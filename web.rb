@@ -39,7 +39,6 @@ end
 #blarg
 def template(pagename="missing title!",js = [],css = [],&block)
 	css << '/main.css'
-	fghofgofgjkjhgffghjhgfhjkljhgfghjkljhgfd
 	return makehtml do |h|
 		h.head do
 			h.title{pagename}
