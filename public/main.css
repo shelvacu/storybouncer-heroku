@@ -75,14 +75,15 @@ body{
 .nextContainer,.prevContainer{
 	height:100%;
 	position:relative;
+	vertical-align:top;
 }
 #bottomNextButton,#bottomPrevButton{
 	position:absolute;
 	bottom:5px;
 }
 #topNextButton,#topPrevButton{
-	position:absolute;
-	top:5px;
+	/*position:absolute;
+	top:5px;*/
 }
 #bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
 	background-color:#9999FF;
