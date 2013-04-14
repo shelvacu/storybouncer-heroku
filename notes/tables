@@ -1,0 +1,19 @@
+Tables:
+	Paras -only SUGGESTED paragraphs; once used they move to an array in the Chapter
+	Chaps
+	Books
+	Users
+	Names -awww sheit, all the same lengths!
+
+array tables shall be named "array" followed by an id
+a special table simply called "array" gives out the ids
+
+Paras:
+	-id
+	-author: userid of the author
+	-book:   id of the book
+	-an: authors note; an attempt to avoid "hey vote for me" /inside/ the actual paragraph text
+	-text: The actual paragraph
+	-upvotes: list(array) of userids of people who have voted
+	-downvotes: see above
+	-chapname: name of a new chapter the paragraph. nil/blank if no new paragraph

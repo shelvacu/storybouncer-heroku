@@ -1,0 +1,27 @@
+/	
+	-main page; currently has the logo and "In development"
+	-short term: it should have an email sign-up for news
+	-eventually have it display recent stories, and a large link to register. Perhaps have completed stories next to un-completed ones, about 3 of each
+/register.fgh
+	-blerg pretty obvious
+/verify.fgh
+	*key
+	-page to verify email.
+	-takes 'key' as Get or Post data. Asks nicely if not provided.
+/donate.fgh
+	-herp-derp
+/login.fgh
+	*username *password
+/logout.fgh
+	-herp
+/book.fgh
+	**id(book id)
+	-Look at a book. Since a book is a list of chapters, show a Table Of Contents of sorts
+/chapter.fgh
+	**id(book id) *chap(number of the chapter)
+	-Look at a specific chapter of a book.
+	-if chap is not provided, one is assumed.
+/para.fgh
+	**id(book id) **text *chapname
+	-used to submit a new suggested para, NOT TO VIEW.
+	-If chapname is included, the suggestion will include a new chapter with the given name.

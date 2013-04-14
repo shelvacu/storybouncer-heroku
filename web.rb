@@ -56,6 +56,8 @@ def template(pagename="missing title!",js = [],css = [],&block)
 					if session[:logged]
 						h << "#{session[:username]} | "
 						h.a(:href => '/usercp.fgh', :id => 'managelink'){"UserCP"}
+						h << " | "
+						h.a(:href => '/logout.fgh', :id => 'logoutlink'){"Logout"}
 					else
 						h.a(:href => '/login.fgh', :id => 'managelink'){"Login"}
 					end
@@ -374,7 +376,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 		chapname = parainfo[:chapname]
 		chap_num += 1 if parainfo[:newchap]
 	end
-	if book[:name].nil?
+	if book[:name].empty?
 		name = 'book of awesome'
 	else
 		name = book[:name]
