@@ -95,6 +95,8 @@ body{
 	border:2px solid black;
 }
 #storybody{
+	margin-top:25px;
+	margin-bottom:25px;
 }
 /* usercp.fgh */
 .left,

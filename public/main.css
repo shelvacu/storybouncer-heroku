@@ -38,8 +38,8 @@ body{
 #bottombar{
 	width:100%;
 	padding:5px 0px 15px;
-	position:absolute;
-	bottom:0px; /* now wait yes they are these aren't needed since the element is placed at the bottom of the page anyway*/
+	//position:absolute;
+	//bottom:0px; /* now wait yes they are these aren't needed since the element is placed at the bottom of the page anyway*/
 	color:white;
 	background-color:black;
 	border-top:2px solid gray;
