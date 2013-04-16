@@ -421,7 +421,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 end
 get "/routes.fgh" do
 	template("Actual Index!") do |h|
-		h << Sinatra::Application.routes.pretty_inspect.gsub("\n","<br />")
+		h << CGI::escapeHTML(Sinatra::Application.routes.pretty_inspect)
 	end
 end
 #=end
