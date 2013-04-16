@@ -23,5 +23,5 @@
 	-if chap is not provided, one is assumed.
 /para.fgh
 	**id(book id) **text *chapname
-	-used to submit a new suggested para, NOT TO VIEW.
+	-used to /submit/ a new suggested para, NOT TO VIEW.
 	-If chapname is included, the suggestion will include a new chapter with the given name.
