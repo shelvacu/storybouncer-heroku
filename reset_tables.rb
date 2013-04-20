@@ -1,38 +1,49 @@
 require './local_sequel'
 DB.create_table! :paras do
 	primary_key :id
-	Integer 	:bookid
-	Integer		:userid
+	Integer 	:auth
 	String		:an 		#author's note
 	String		:text 		#actual paragraph text
-	String		:chapname
-	String		:upvotes  ,:default => ""			#Integer		:upvotes
-	String		:downvotes,:default => ""			#Integer		:downvotes
-	TrueClass	:newchap  ,:default => false
-	TrueClass	:endchap  ,:default => false
+	Integer		:upvotes  #its an ID, remember that!
+	Integer		:downvotes#^
+	TrueClass	:chapname => nil
 	#Integer		:chapnum
+end
+
+DB.create_table! :chaps do
+  primary_key :id
+  Integer     :paras
+  String      :name
 end
 
 DB.create_table! :books do
 	primary_key :id
-	Integer		:userid
-	Time		:timestamp
-	String		:pparas, 	:default => ""
-	String		:paras,  	:default => ""
-	TrueClass	:finished,	:default => false
-	String		:endvotes			#Integer		:endvotes,	:default => 0
-	String		:noendvotes			#Integer 	:noendvotes,:default => 0
-	String		:upvotes 	#added after; for when book is finished
-	String		:downvotes	#see ^
-	Integer		:numend,	:default => 99
-	String		:name,		:default => ""
+	Integer     :auth
+  Integer     :chaps #arr
+  Integer     :endvotes #arr
+  Integer     :noendvotes #arr
+  Integer     :pparas #arr
+  TrueClass   :fin
+  Integer     :pnames #arr
+  Integer     :name #ID of object
+end
+
+DB.create_table! :users do
+  primary_key :id
+  String      :user
+  String      :pass
+  String      :email
+  String      :emailver
+  TrueClass   :veri
+  Integer     :subs #arr
+  Integer     :hist #arr
+  Time        :ban => Time.at(0) #d-fault 2 epoch
 end
 
 DB.create_table! :names do
 	primary_key	:id
-	String		:name
-	Integer		:bookid
-	Integer		:userid
-	String		:upvotes			#Integer		:upvotes	,:default => 0
-	String		:downvotes			#Integer		:downvoted	,:default => 0
+  Integer     :auth
+	String      :name
+	Integer		:upvotes #arr
+	Integer		:downvotes #arr
 end

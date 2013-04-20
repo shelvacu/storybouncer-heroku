@@ -419,13 +419,49 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 		end
 	end
 end
+=begin
+get "/routes.txt" do
+	content_type 'plain/text'
+	#template("Actual Index!") do |h|
+		#h.p(:style => "text-align:left;font-family:monospace;white-space:nowrap;") do
+			#CGI::escapeHTML(
+			Sinatra::Application.routes.pretty_inspect#).gsub("\n","<br/>").gsub(' ',"<span> </span>")
+		#end
+	#end
+end
+=end
 get "/routes.fgh" do
-	template("Actual Index!") do |h|
-		h << CGI::escapeHTML(Sinatra::Application.routes.pretty_inspect)
+	routes = Sinatra::Application.routes
+	pages = Hash.new{|j,k| j[k]=[]} #"blarg.fgh" => ["GET","POST"]
+	routes.each do |key,val|
+		val.each do |route|
+			re_name = route[0]
+			raw_name = re_name.inspect
+			name = raw_name.gsub("/^\\/","/").gsub("(?:\\.|%2E)",".").gsub("$/",'')
+			pages[name] << key
+		end
+	end
+	Dir["./public/**/*"].each do |fn|
+		fn.gsub!(/^\.\/public/,'')
+		pages[fn] << "GET"
+	end
+	template("Index of pages") do |h|
+		h.table do
+		h.tbody do
+			pages.each do |key,val|
+				h.tr do
+					h.td do
+						h << key
+					end
+					h.td do
+						h << val.join(',')
+					end
+				end
+			end
+		end
+		end
 	end
 end
-#=end
-
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
 #end

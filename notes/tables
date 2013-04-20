@@ -1,5 +1,5 @@
 Tables:
-	Paras -only SUGGESTED paragraphs; once used they move to an array in the Chapter
+	Paras
 	Chaps
 	Books
 	Users
@@ -10,10 +10,45 @@ a special table simply called "array" gives out the ids
 
 Paras:
 	-id
-	-author: userid of the author
-	-book:   id of the book
+	-auth: userid of the author
 	-an: authors note; an attempt to avoid "hey vote for me" /inside/ the actual paragraph text
 	-text: The actual paragraph
 	-upvotes: list(array) of userids of people who have voted
 	-downvotes: see above
 	-chapname: name of a new chapter the paragraph. nil/blank if no new paragraph
+
+Chaps
+	-id
+	-paras: array of para id's
+					should be sorted by id when used
+	-name
+	(it feels like there should be something else)
+
+Books
+	-id
+	-auth: author id
+	-chaps: array of chapter ids
+	-endvotes: list of people wanting to end the book
+	-noendvotes: list of people NOT wanting to end the book
+	-pparas: list of possible(being voted on) paragraphs aka sugggestions
+	-fin: bool; whether or not the book is finished
+	-pnames: possible names being voted on; ONLY AFTER VOTE TO FINISH; aka after fin==true
+	-name: ID of name object
+
+Users
+	-id
+	-user: name
+	-pass: md5 hash of password
+	-email: registered email
+	-emailver: email verification key
+	-veri: bool, has the email been verified?
+	-subs: array of books subscribed to
+	-hist: books that the user has succesfully contributed to
+	-ban: date of when the user becomes un-banned. Defaults to epoch
+
+Names
+	-id
+	-auth: id of author
+	-name: literal string of the name
+	-upvotes
+	-downvotes
