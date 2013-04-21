@@ -21,7 +21,7 @@ Pony.options = {
     :enable_starttls_auto => true
   }
 }
-$site_name = "protected-brushlands-7337.herokuapp.com"
+$site_name = "www.storybouncer.org" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)
 	return true unless email.match(/^\w*@\w*\.\w{2,5}(\.\w{2,5})?$/).nil?
 	return false
@@ -95,6 +95,11 @@ error 404 do
 			h.a(:href => '/'){"HOME?"}
 		end
 	end
+end
+before do
+  if request.host == "storybouncer.com"
+    redirect request.url.gsub("storybouncer.com","www.storybouncer.com")
+  end
 end
 get '/' do
 	$h = HTMLMaker.new
