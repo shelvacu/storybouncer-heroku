@@ -42,7 +42,7 @@ end
 
 DB.create_table! :names do
 	primary_key	:id
-  Integer     :auth
+  Integer     :auth#or
 	String      :name
 	Integer		:upvotes #arr
 	Integer		:downvotes

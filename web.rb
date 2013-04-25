@@ -30,7 +30,8 @@ def valid_username?(name)
 	return true unless name.match(/^[\w_^ ]{1,20}$/).nil?
 	return false
 end
-def makehtml#(&block)
+
+def makehtml #(&block)
 	h = HTMLMaker.new
 	h << "<!DOCTYPE html>\n"
 	h.html{yield h}#block.call(h)}
@@ -54,12 +55,14 @@ def template(pagename="missing title!",js = [],css = [],&block)
 				h.img(:id => "toplogo",:src => '/smalllogo.gif')
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
-						h << "#{session[:username]} | "
+						h << "#{session[:user]} | "
 						h.a(:href => '/usercp.fgh', :id => 'managelink'){"UserCP"}
 						h << " | "
 						h.a(:href => '/logout.fgh', :id => 'logoutlink'){"Logout"}
 					else
 						h.a(:href => '/login.fgh', :id => 'managelink'){"Login"}
+            h << " | "
+            h.a(:href => '/register.fgh', :id => 'regsiterlink'){"Register"}
 					end
 				end
 			end
@@ -111,7 +114,7 @@ get '/' do
 		$h.body do
 			$h.img(:src => '/logo.gif')
 			$h.h1(:id => 'awesome'){"Currently in development"}
-			#$h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
+			# $h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
 			if rand(2) == 0
 				$h.h1(:style => "font-size:big;"){"It's your lucky day!"}
 			end
@@ -156,16 +159,16 @@ end
 post '/register.fgh' do
 	#make sure all parameters are there
 	template('registering') do |h|
-		unless params[:username].nil? || params[:email].nil? || params[:password].nil?
-			redirect "/invalid/username/#{params[:username]}" unless valid_username?(params[:username])
+		unless params[:user].nil? || params[:email].nil? || params[:password].nil?
+			redirect "/invalid/username/#{params[:user]}" unless valid_username?(params[:user])
 			redirect "/invalid/email/#{params[:email]}" unless valid_email?(params[:email])
-			if DB[:users].where(:username => params[:username]).empty? && DB[:users].where(:email => params[:email]).empty?
+			if DB[:users].where(:user => params[:user]).empty? && DB[:users].where(:email => params[:email]).empty?
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
-				DB[:users].insert(:username => params[:username],:pass => Digest::MD5.hexdigest(params[:password]), :email => params[:email], :emailver => email_verify_key)
+				DB[:users].insert(:user => params[:user],:pass => Digest::MD5.hexdigest(params[:password]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray)
 				session[:logged] = true
-				session[:username] = params[:username]
+				session[:user] = params[:user]
 				#email availible, all good!
 				verify_link = "http://#{$site_name}/verify.fgh?key=#{email_verify_key}"
 				e = HTMLMaker.new
@@ -174,7 +177,7 @@ post '/register.fgh' do
 					e.a(:href => verify_link){"Here"}
 					e.span{"To verify your account. <br />Alternatively, use the key \"#{email_verify_key}\" at #{$site_name}/verify.fgh"}
 				end
-				Pony.mail(	:from => "no-reply@protected-brushlands-7337.herokuapp.com",:to => params[:email],
+				Pony.mail(	:from => "no-reply@storybouncer.com",:to => params[:email],
 							:subject => "your new account!", :html_body => e.to_s, 
 							:body => "Please copy+paste this url into your browser: #{verify_link}\n\nOr, go to #{$site_name}/verify.fgh and enter the code #{email_verify_key.inspect}")
 				h.h2{"Success :D"}
@@ -227,7 +230,7 @@ get '/login.fgh' do
 	template("Login") do |h|
 		if session[:logged]
 			h.h2 do
-				h << "You are already logged in as #{session[:username]}. Perhaps you want to "
+				h << "You are already logged in as #{session[:user]}. Perhaps you want to "
 				h.a(:href => "/logout.fgh"){"logout?"}
 			end
 		else
@@ -257,22 +260,22 @@ end
 
 post '/login.fgh' do
 	ret = "error" #this is default value; what it will return if ret is not set
-	if params[:username].nil? || params[:password].nil?
+	if params[:user].nil? || params[:password].nil?
 		ret = template('Error') do |h|
 			h.h3{"Form submit failed. Please refresh and try again"}
 		end
-	elsif DB[:users].where(:username => params[:username]).empty?
+	elsif DB[:users].where(:user => params[:user]).empty?
 		ret = template('Username Incorrect'){|h| h.h2{"Username incorrect"}}
-	elsif DB[:users].where(:username => params[:username],:pass => Digest::MD5.hexdigest(params[:password]) ).empty?
+	elsif DB[:users].where(:user => params[:user],:pass => Digest::MD5.hexdigest(params[:password]) ).empty?
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
-		userdata = DB[:users].where(:username => params[:username],:pass => Digest::MD5.hexdigest(params[:password]) ).all[0]
+		userdata = DB[:users].where(:user => params[:user],:pass => Digest::MD5.hexdigest(params[:password]) ).all[0]
 		session[:logged] = true
-		session[:username] = userdata[:username]
+		session[:user] = userdata[:user]
 		session[:userid] = userdata[:id]
 		ret = template('Login successful') do |h|
 			h.h4{"Success"}
-			h.span{"You are now logged in as #{session[:username]}"}
+			h.span{"You are now logged in as #{session[:user]}"}
 		end
 	end
 	ret
@@ -286,12 +289,12 @@ end
 get '/usercp.fgh' do
 	template("UserCP") do |h|
 		if session[:logged]
-			userinfo = DB[:users].where(:username => session[:username]).limit(1).all.first
-			#h.span{DB[:users].where(:username => session[:username]).limit(1).all.pretty_inspect}
+			userinfo = DB[:users].where(:user => session[:user]).limit(1).all.first
+			#h.span{DB[:users].where(:user => session[:user]).limit(1).all.pretty_inspect}
 			h.table do
 				h.tr do
 					h.td(:class => 'left'){"Username:"}
-					h.td(:class => 'right'){userinfo[:username]}
+					h.td(:class => 'right'){userinfo[:user]}
 				end
 				h.tr do
 					h.td(:class => 'left'){"Password:"}
@@ -364,36 +367,24 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	params[:id] = params[:id].to_i
 	
 	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
-	params[:chap] = 1 if params[:chap].nil?
-	params[:chap] = params[:chap].to_i
+	#params[:chap] = 1 if params[:chap].nil?
+	#params[:chap] = params[:chap].to_i
+  chap_num == (params[:chap] || 1).to_i
 #log += "Assuming chap##{params[:chap]}\n"	
 	book = DB[:books].where(:id => params[:id]).all.first
-	paraids = book[:paras].split(',')
-#log += "paraids = #{paraids.inspect}\n"
-	paraids.collect!{|a| a.to_i}
-#log += "paraids = #{paraids.inspect}\n"
-	all_paras = DB[:paras].where(:id => paraids).all
-	chap_num = 1
-	paras = []
-	chapname = 'nothing?'
-	all_paras.each do |parainfo|
-		paras << parainfo[:text] if chap_num == params[:chap]
-		chapname = parainfo[:chapname]
-		chap_num += 1 if parainfo[:newchap]
-	end
-	if book[:name].empty?
-		name = 'book of awesome'
-	else
-		name = book[:name]
-	end
-	
+  chaps = getarray(book[:chaps])
+  chap = chaps.limit(1,chap_num-1).all[0]
+  name = (chap.nil? ? "Chapter not here(yet)" : chap[:name])
+  name = CGI.escapeHTML(name)
+  paras= (chap.nil? ? {:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"} : getarray(chap[:paras]).order(:id).all)
+  error "ITS NOT FINISHED YET!"
 	template("#{name} - Storybouncer") do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
 				if params[:chap] > 1
 					#h.div(:class => 'prevContainer') do
 					['top','bottom'].each { |s|
-						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] - 1}",:id => "#{s}PrevButton"){"Prev"}
+						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap.nil? ? 1 : (params[:chap] - 1)}",:id => "#{s}PrevButton"){"Prev"}
 					}
 					#end
 				else
@@ -402,10 +393,10 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 			end
 			h.td do
 				h.div(:id => 'storybody') do
-					h.h2{CGI.escapeHTML(chapname)}
+					h.h2(:id => 'storyname'){name}
 					h.br
 					paras.each do |para|
-						h.p(:class => 'paratext'){para}
+						h.p(:class => 'paratext'){para[:text]}
 						h.br
 					end
 				end
