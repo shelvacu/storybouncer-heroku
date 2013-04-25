@@ -114,7 +114,7 @@ get '/' do
 			$h.style{"img{margin:0px auto}"}	
 		}
 		$h.body do
-      $h.div(:style => "float:left") do
+      $h.div() do
         $h.img(:src => '/logo.gif')
         $h.h1(:id => 'awesome'){"Currently in development"}
         # $h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
