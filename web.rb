@@ -105,6 +105,7 @@ before do
   end
 end
 get '/' do
+  win = (rand(10)==0)
 	$h = HTMLMaker.new
 	$h.html do
 		$h.head{
@@ -112,15 +113,36 @@ get '/' do
 			$h.style{"img{margin:0px auto}"}	
 		}
 		$h.body do
-			$h.img(:src => '/logo.gif')
-			$h.h1(:id => 'awesome'){"Currently in development"}
-			# $h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
-			if rand(2) == 0
-				$h.h1(:style => "font-size:big;"){"It's your lucky day!"}
-			end
+      h.div(:style => "float:left") do
+        $h.img(:src => '/logo.gif')
+        $h.h1(:id => 'awesome'){"Currently in development"}
+        # $h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
+        if win
+          $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
+        end
+      end
+      h.div do
+        h.h3{"Would you like to know when it's done? Sign-up here!"}
+        h.form(:method => "post") do
+          h.span{h << "Email:";h.input(:type => 'text',:name => 'email');h.input(:type => 'submit',:value => 'submit')}
+        end
+      end
 		end
 	end
 	$h.to_s
+end
+
+post '/' do
+  makehtml do |h|
+    h.h2 do
+      if params[:email].nil?
+        "YOU DID IT WRONG! D:"
+      else
+        DB[:notif].insert(:email => params[:email])
+        "Thanks! You will be notified when Storybouncer is released!"
+      end
+    end
+  end
 end
 
 get '/test.fgh' do
@@ -377,7 +399,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
   name = (chap.nil? ? "Chapter not here(yet)" : chap[:name])
   name = CGI.escapeHTML(name)
   paras= (chap.nil? ? {:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"} : getarray(chap[:paras]).order(:id).all)
-  error "ITS NOT FINISHED YET!"
+  # error "ITS NOT FINISHED YET!"
 	template("#{name} - Storybouncer") do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
@@ -396,7 +418,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 					h.h2(:id => 'storyname'){name}
 					h.br
 					paras.each do |para|
-						h.p(:class => 'paratext'){para[:text]}
+						h.p(:class => 'paratext'){CGI.escapeHTML(para[:text]).gsub("\n","<br/>")}
 						h.br
 					end
 				end
