@@ -21,7 +21,7 @@ bookid = DB[:books].insert(:auth => userid,
                   :endvotes => makearray,
                   :noendvotes => makearray,
                   :pparas => makearray,
-                  :fin => true
+                  :fin => true,
                   :pnames => makearray,
                   :name => nameid)
 chapids = []
