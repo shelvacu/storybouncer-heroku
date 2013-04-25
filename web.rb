@@ -113,7 +113,7 @@ get '/' do
 			$h.style{"img{margin:0px auto}"}	
 		}
 		$h.body do
-      h.div(:style => "float:left") do
+      $h.div(:style => "float:left") do
         $h.img(:src => '/logo.gif')
         $h.h1(:id => 'awesome'){"Currently in development"}
         # $h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
@@ -121,10 +121,10 @@ get '/' do
           $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
         end
       end
-      h.div do
-        h.h3{"Would you like to know when it's done? Sign-up here!"}
-        h.form(:method => "post") do
-          h.span{h << "Email:";h.input(:type => 'text',:name => 'email');h.input(:type => 'submit',:value => 'submit')}
+      $h.div do
+        $h.h3{"Would you like to know when it's done? Sign-up here!"}
+        $h.form(:method => "post") do
+          $h.span{h << "Email:";h.input(:type => 'text',:name => 'email');h.input(:type => 'submit',:value => 'submit')}
         end
       end
 		end
