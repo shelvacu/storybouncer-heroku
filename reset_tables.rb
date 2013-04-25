@@ -6,8 +6,7 @@ DB.create_table! :paras do
 	String		:text 		#actual paragraph text
 	Integer		:upvotes  #its an ID, remember that!
 	Integer		:downvotes#^
-	TrueClass	:chapname => nil
-	#Integer		:chapnum
+	String  	:chapname, :default => nil
 end
 
 DB.create_table! :chaps do
@@ -42,8 +41,13 @@ end
 
 DB.create_table! :names do
 	primary_key	:id
-  Integer     :auth
+  Integer     :auth#or
 	String      :name
-	Integer		:upvotes #arr
-	Integer		:downvotes
+ 	Integer	  	:upvotes #arr
+ 	Integer	  	:downvotes
+  TrueClass   :fin #when voting ends
+end
+
+DB.create_table! :array do
+  primary_key :id
 end
