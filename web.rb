@@ -87,7 +87,7 @@ def template(pagename="missing title!",js = [],css = [],&block)
 end
 error do
 	err = env['sinatra.error']
-	Pony.mail(	:from => "error@protected-brushlands-7337.herokuapp.com",:to => "shelvacu@gmail.com", :subject => err.class.to_s,
+	Pony.mail(	:from => "error@storybouncer.com",:to => "shelvacu@gmail.com", :subject => err.class.to_s,
 				:body => "Current session:#{session.inspect}\n#{err.message}\n\n#{err.backtrace.join("\n")}" )
 	template("Error") do |h|
 		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
@@ -407,10 +407,10 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	template("#{name} - Storybouncer") do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
-				if params[:chap] > 1
+				if chap_num > 1
 					#h.div(:class => 'prevContainer') do
 					['top','bottom'].each { |s|
-						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap.nil? ? 1 : (params[:chap] - 1)}",:id => "#{s}PrevButton"){"Prev"}
+						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap.nil? ? 1 : (chap_num - 1)}",:id => "#{s}PrevButton"){"Prev"}
 					}
 					#end
 				else
@@ -428,10 +428,10 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 				end
 			end
 			h.td(:class => 'nextContainer') do
-				if params[:chap] < chap_num
+				if chap_num < chap_num
 					#h.div(:class => 'nextContainer') do
 					['top','bottom'].each { |s|
-						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{params[:chap] + 1}",:id => "#{s}NextButton"){"Next"}
+						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap_num + 1}",:id => "#{s}NextButton"){"Next"}
 					}
 					#end
 				else
