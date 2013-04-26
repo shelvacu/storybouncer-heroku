@@ -389,10 +389,10 @@ end
 #=begin
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	log = ""
-	error 404 if params[:id].nil?
+	return "nup, no id" if params[:id].nil?
 	params[:id] = params[:id].to_i
 	
-	error 404 if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
+	return "book does not exist" if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
 	#params[:chap] = 1 if params[:chap].nil?
 	#params[:chap] = params[:chap].to_i
   chap_num == (params[:chap] || 1).to_i
