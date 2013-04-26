@@ -41,7 +41,7 @@ end
 def template(pagename="missing title!",js = [],css = [],&block)
 	css << '/main.css'
   js  << '/reposition.js'
-  js.insert(0,"http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
+  js.insert(0,"https://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
 	pagename += " - Storybouncer"
   return makehtml do |h|
 		h.head do
