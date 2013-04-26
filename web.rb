@@ -483,6 +483,9 @@ get "/routes.fgh" do
 		end
 	end
 end
+get '/plain-ip.fgh' do
+  "#{request.ip}"
+end
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
 #end
