@@ -104,7 +104,7 @@ error 404 do
 end
 before do
   if request.host == "storybouncer.com"
-    redirect request.url.gsub("storybouncer.com","www.storybouncer.com")
+    redirect request.url.gsub("storybouncer.com","www.storybouncer.com"),301
   end
 end
 get '/' do
@@ -395,7 +395,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	return "book does not exist" if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
 	#params[:chap] = 1 if params[:chap].nil?
 	#params[:chap] = params[:chap].to_i
-  chap_num == (params[:chap] || 1).to_i
+  chap_num = (params[:chap] || 1).to_i
 #log += "Assuming chap##{params[:chap]}\n"	
 	book = DB[:books].where(:id => params[:id]).all.first
   chaps = getarray(book[:chaps])
