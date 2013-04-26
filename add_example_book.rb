@@ -2,8 +2,8 @@ require './local_sequel'
 require 'yaml'
 # puts "THIS PROGRAM IS OBSELETE AND DOESN'T WORK!" 
 username = "Arthur Conan Doyle"
-dataset= DB[:users].where(:username => username)
-DB[:users].insert(	:username => username, 
+dataset= DB[:users].where(:user => username)
+DB[:users].insert(	:user => username, 
                     :pass => "666",
                     :email => "emailofadeadman",
                     :emailver => "wq23iujt4erofd9wu3rj4k5rotf09ifer43erfd09iknr", 
