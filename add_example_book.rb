@@ -31,7 +31,7 @@ chaps.each do |key,val|
   getarray(paraarray).insert(:val => paraid)
   chapids << {:val => DB[:chaps].insert(:paras => paraarray, :name => key)}
 end
-getarray(DB[:books][bookid].select(:chaps).all[0][:chaps]).multi_insert(chapids)
+getarray(DB[:books].where(:id => bookid).select(:chaps).all[0][:chaps]).multi_insert(chapids)
 puts "all done!"
 =begin
 ts = Time.now
