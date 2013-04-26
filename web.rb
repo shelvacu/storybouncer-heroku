@@ -42,7 +42,8 @@ def template(pagename="missing title!",js = [],css = [],&block)
 	css << '/main.css'
   js  << '/reposition.js'
   js.insert(0,"http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
-	return makehtml do |h|
+	pagename += " - Storybouncer"
+  return makehtml do |h|
 		h.head do
 			h.title{pagename}
 			css.each do |name|
@@ -486,6 +487,12 @@ end
 get '/plain-ip.fgh' do
   "#{request.ip}"
 end
+get '/ip.fgh' do
+  template("Your IP is #{request.ip}") do |h|
+    h.h1{"#{request.ip}"}
+  end
+end
+    
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
 #end
