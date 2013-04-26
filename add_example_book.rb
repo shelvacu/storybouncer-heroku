@@ -13,7 +13,7 @@ userid = dataset.all[0][:id]
 name = "The Adventures of Sherlock Holmes"
 authors_note = ""
 
-chaps = Yaml::load(File.read('sherlock.yaml'))
+chaps = YAML::load(File.read('sherlock.yaml'))
 chapsarr = makearray
 nameid = DB[:names].insert(:auth => userid, :name => name, :fin => true)
 bookid = DB[:books].insert(:auth => userid, 
