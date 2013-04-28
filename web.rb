@@ -1,6 +1,5 @@
 require 'sinatra'
-require 'digest
-'
+require 'digest'
 require './html-maker'
 require './local_sequel'
 require 'pony'
@@ -126,6 +125,8 @@ get '/' do
           $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
         end
       end
+      $h.h1{"What is Storybouncer?"}
+      $h.p{"You start with a book. Someone(possibly you) creates an (imcomplete) book with a name and one paragraph. Then multiple other people(like you) come along and suggest what the next paragraph should be. All of the suggestions are voted on by everyone(you!) and the para with the most votes gets added to the book. This repeats until everyone votes to end the book. That is what Storybouncer is."}
       $h.div do
         $h.h3{"Would you like to know when it's done? Sign-up here!"}
         $h.form(:method => "post") do
