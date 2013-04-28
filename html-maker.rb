@@ -1,5 +1,5 @@
 require 'cgi'
-class InvalidAttribute;end
+class InvalidAttribute < StandardError;end
 class HTMLMaker
 
 	def initialize()

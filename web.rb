@@ -1,5 +1,6 @@
 require 'sinatra'
-require 'digest/md5'
+require 'digest
+'
 require './html-maker'
 require './local_sequel'
 require 'pony'
@@ -192,7 +193,7 @@ post '/register.fgh' do
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
-				DB[:users].insert(:user => params[:user],:pass => Digest::MD5.hexdigest(params[:password]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray)
+				DB[:users].insert(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:password]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray)
 				session[:logged] = true
 				session[:user] = params[:user]
 				#email availible, all good!
@@ -292,10 +293,10 @@ post '/login.fgh' do
 		end
 	elsif DB[:users].where(:user => params[:user]).empty?
 		ret = template('Username Incorrect'){|h| h.h2{"Username incorrect"}}
-	elsif DB[:users].where(:user => params[:user],:pass => Digest::MD5.hexdigest(params[:password]) ).empty?
+	elsif DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:password]) ).empty?
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
-		userdata = DB[:users].where(:user => params[:user],:pass => Digest::MD5.hexdigest(params[:password]) ).all[0]
+		userdata = DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:password]) ).all[0]
 		session[:logged] = true
 		session[:user] = userdata[:user]
 		session[:userid] = userdata[:id]
@@ -399,10 +400,10 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 #log += "Assuming chap##{params[:chap]}\n"	
 	book = DB[:books].where(:id => params[:id]).all.first
   chaps = getarray(book[:chaps])
-  chap = chaps.limit(1,chap_num-1).all[0]
+  chap = DB[:chaps].where(:id => chaps.limit(1,chap_num-1).all[0][:val])
   name = (chap.nil? ? "Chapter not here(yet)" : chap[:name])
   name = CGI.escapeHTML(name)
-  paras= (chap.nil? ? {:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"} : getarray(chap[:paras]).order(:id).all)
+  paras= (chap.nil? ? [{:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"}] : getarray(chap[:paras]).order(:id).all.map{|o| DB[:paras].where(:id => o[:val]).all.first })
   # error "ITS NOT FINISHED YET!"
 	template("#{name} - Storybouncer") do |h|
 		h.singletablerow do
