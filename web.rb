@@ -409,7 +409,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 #log += "Assuming chap##{params[:chap]}\n"	
 	book = DB[:books].where(:id => params[:id]).all.first
   chaps = getarray(book[:chaps])
-  chap_id = chaps.limit(1,chap_num-1).all[0][:val]
+  chap_id = chaps.order_by(:val).limit(1,chap_num-1).all[0][:val]
   chap = DB[:chaps].where(:id => chap_id).all.first
   name = (chap.nil? ? "Chapter not here(yet)" : chap[:name])
   name = CGI.escapeHTML(name)
