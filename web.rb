@@ -29,7 +29,7 @@ if ENV['TESTING_ENV'].nil?
 else
   Pony.options = { :via => :sendmail, :from => "iforgotoincludeafromaddress@storybouncer.com" }
 end 
-$site_name = "www.storybouncer.org" #"protected-brushlands-7337.herokuapp.com"
+$site_name = "www.storybouncer.com" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)
 	return true unless email.match(/^\w*@\w*\.\w{2,5}(\.\w{2,5})?$/).nil?
 	return false
