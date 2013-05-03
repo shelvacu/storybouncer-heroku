@@ -51,3 +51,12 @@ end
 DB.create_table! :array do
   primary_key :id
 end
+
+DB.tables.each do |table_name|
+  DB.drop_table(table_name) if /array\d+/ === table_name
+end
+
+DB.create_table! :notif do
+  primary_key :id
+  String :email
+end

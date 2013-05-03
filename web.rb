@@ -5,22 +5,30 @@ require './local_sequel'
 require 'pony'
 require 'pp'
 require 'cgi' #SOOO MANY LIBRARIEZZZZZ!
+
+if DB.tables.empty? #database has not been generated, it needs to be
+  require './reset_tables.rb'
+end
 enable :sessions
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 set :show_exceptions, false
 
-Pony.options = {
-  :via => :smtp,
-  :via_options => {
-    :address => 'smtp.sendgrid.net',
-    :port => '587',
-    :domain => 'heroku.com',
-    :user_name => ENV['SENDGRID_USERNAME'],
-    :password => ENV['SENDGRID_PASSWORD'],
-    :authentication => :plain,
-    :enable_starttls_auto => true
+if ENV['TESTING_ENV'].nil?
+  Pony.options = {
+    :via => :smtp,
+    :via_options => {
+      :address => 'smtp.sendgrid.net',
+      :port => '587',
+      :domain => 'storybouncer.com',
+      :user_name => ENV['SENDGRID_USERNAME'],
+      :password => ENV['SENDGRID_PASSWORD'],
+      :authentication => :plain,
+      :enable_starttls_auto => true
+    }
   }
-}
+else
+  Pony.options = { :via => :sendmail, :from => "iforgotoincludeafromaddress@storybouncer.com" }
+end 
 $site_name = "www.storybouncer.org" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)
 	return true unless email.match(/^\w*@\w*\.\w{2,5}(\.\w{2,5})?$/).nil?
@@ -116,7 +124,7 @@ get '/' do
 			$h.title{"Storybouncer!"}
 			$h.style{"img{margin:0px auto}"}	
 		}
-		$h.body do
+		$h.body("style" => 'text-align:center') do
       $h.div() do
         $h.img(:src => '/logo.gif')
         $h.h1(:id => 'awesome'){"Currently in development"}
@@ -126,7 +134,7 @@ get '/' do
         end
       end
       $h.h1{"What is Storybouncer?"}
-      $h.p{"You start with a book. Someone(possibly you) creates an (imcomplete) book with a name and one paragraph. Then multiple other people(like you) come along and suggest what the next paragraph should be. All of the suggestions are voted on by everyone(you!) and the para with the most votes gets added to the book. This repeats until everyone votes to end the book. That is what Storybouncer is."}
+      $h.p(:style => "width:400px;margin-right:auto;margin-left:auto;"){"You start with a book. Someone(possibly you) creates an (imcomplete) book with a name and one paragraph. Then multiple other people(like you) come along and suggest what the next paragraph should be. All of the suggestions are voted on by everyone(you!) and the para with the most votes gets added to the book. This repeats until everyone votes to end the book. That is what Storybouncer is."}
       $h.div do
         $h.h3{"Would you like to know when it's done? Sign-up here!"}
         $h.form(:method => "post") do
@@ -166,13 +174,13 @@ get '/register.fgh' do
 				h.span{"Username:"}
 				#o =  [('a'..'z'),('A'..'Z')].map{|i| i.to_a}.flatten
 				#string  =  (0...50).map{ o[rand(o.length)] }.join
-				h.input(:type => 'text',:name => "username")
+				h.input(:type => 'text',:name => "user")
 				h.br
 				h.span{"Email:"}
 				h.input(:type => 'text',:name => "email")
 				h.br
 				h.span{"Password:"}
-				h.input(:type => 'password',:name => "password")
+				h.input(:type => 'password',:name => "pass")
 				h.br
 				h.input(:type => 'submit', :value => 'Register')
 			end
@@ -186,15 +194,15 @@ get  /\/invalid\/(.*)\/(.*).fgh/ do |type,value|
 end
 post '/register.fgh' do
 	#make sure all parameters are there
-	template('registering') do |h|
-		unless params[:user].nil? || params[:email].nil? || params[:password].nil?
+	template('Registering') do |h|
+		unless params[:user].nil? || params[:email].nil? || params[:pass].nil?
 			redirect "/invalid/username/#{params[:user]}" unless valid_username?(params[:user])
 			redirect "/invalid/email/#{params[:email]}" unless valid_email?(params[:email])
 			if DB[:users].where(:user => params[:user]).empty? && DB[:users].where(:email => params[:email]).empty?
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
-				DB[:users].insert(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:password]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray)
+				DB[:users].insert(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray)
 				session[:logged] = true
 				session[:user] = params[:user]
 				#email availible, all good!
@@ -288,16 +296,16 @@ end
 
 post '/login.fgh' do
 	ret = "error" #this is default value; what it will return if ret is not set
-	if params[:user].nil? || params[:password].nil?
+	if params[:user].nil? || params[:pass].nil?
 		ret = template('Error') do |h|
 			h.h3{"Form submit failed. Please refresh and try again"}
 		end
 	elsif DB[:users].where(:user => params[:user]).empty?
 		ret = template('Username Incorrect'){|h| h.h2{"Username incorrect"}}
-	elsif DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:password]) ).empty?
+	elsif DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]) ).empty?
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
-		userdata = DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:password]) ).all[0]
+		userdata = DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]) ).all[0]
 		session[:logged] = true
 		session[:user] = userdata[:user]
 		session[:userid] = userdata[:id]

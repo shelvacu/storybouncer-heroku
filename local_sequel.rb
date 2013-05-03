@@ -10,4 +10,4 @@ def makearray(type = Integer,name = :val)
   end
   return id
 end
-DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'] || 'postgres://localhost/mydb')
+DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'] || 'sqlite://local.db')
