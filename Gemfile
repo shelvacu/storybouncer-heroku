@@ -4,4 +4,6 @@ gem 'thin'
 gem 'pg'
 gem 'sequel'
 gem 'pony'
-#gem 'sqlite3'
+group :development do
+  gem 'sqlite3'
+end

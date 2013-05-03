@@ -62,7 +62,8 @@ def template(pagename="missing title!",js = [],css = [],&block)
 			end
 		end
 		h.body do
-			h.div(:id => 'topbar') do
+			h.noscript{'<span style="margin-left:auto;margin-right:auto;">This site won\'t be as pretty without javascript.'}
+      h.div(:id => 'topbar') do
 				h.img(:id => "toplogo",:src => '/smalllogo.gif')
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
