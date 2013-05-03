@@ -439,7 +439,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 				end
 			end
 			h.td(:class => 'nextContainer') do
-				if chap_num < chap_num
+				if chap_num < chaps.count
 					#h.div(:class => 'nextContainer') do
 					['top','bottom'].each { |s|
 						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap_num + 1}",:id => "#{s}NextButton"){"Next"}
