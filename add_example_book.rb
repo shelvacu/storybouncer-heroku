@@ -3,6 +3,7 @@ require 'yaml'
 # puts "THIS PROGRAM IS OBSELETE AND DOESN'T WORK!" 
 username = "Arthur Conan Doyle"
 dataset= DB[:users].where(:user => username)
+dataset.delete
 DB[:users].insert(	:user => username, 
                     :pass => "666",
                     :email => "emailofadeadman",

@@ -41,4 +41,4 @@ end
 
 serv = SMTPServer.new
 serv.start
-serv.join
+#serv.join

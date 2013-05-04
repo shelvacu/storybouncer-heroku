@@ -33,6 +33,7 @@ if ENV['TESTING_ENV'].nil?
     }
   }
 else
+  require './smtp_serv'
   Pony.options = {
     :via => :smtp,
     :via_options =>  {
@@ -216,7 +217,7 @@ post '/register.fgh' do
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
-				DB[:users].insert(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray)
+				DB[:users].insert(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray,:auth => 0)
 				session[:logged] = true
 				session[:user] = params[:user]
 				#email availible, all good!
@@ -289,11 +290,11 @@ get '/login.fgh' do
 				h.tbody do
 					h.tr do
 						h.td{ h.span(:class => 'stuffdoer'){"Username:"} }
-						h.td{ h.input(:type => "text",:name => "username",:id => "usernameBox") }
+						h.td{ h.input(:type => "text",:name => "user",:id => "usernameBox") }
 					end
 					h.tr do
 						h.td{ h.span(:class => 'stuffdoer'){"Password:"} }
-						h.td{ h.input(:type => "password",:name => "password") }
+						h.td{ h.input(:type => "password",:name => "pass") }
 					end
 					h.tr do
 						h.td{ h.input(:type => "submit") }
@@ -340,6 +341,10 @@ get '/usercp.fgh' do
 	template("UserCP") do |h|
 		if session[:logged]
 			userinfo = DB[:users].where(:user => session[:user]).limit(1).all.first
+      if userinfo.nil?
+        session.clear
+        error 404
+      end
 			#h.span{DB[:users].where(:user => session[:user]).limit(1).all.pretty_inspect}
 			h.table do
 				h.tr do
@@ -348,7 +353,12 @@ get '/usercp.fgh' do
 				end
 				h.tr do
 					h.td(:class => 'left'){"Password:"}
-					h.td(:class => 'right'){"TODO - Reset"}
+					h.td(:class => 'right') do
+            h.form do
+              h.span{"SOOON"}
+              #h.input(:type => 'password'
+            end
+          end
 				end
 				h.tr do
 					h.td(:class => 'left'){"Email:"}
@@ -390,7 +400,7 @@ get '/verify.fgh' do
 			end
 		else
 			users = DB[:users].where(:emailver => params[:key]).all
-			if users.empty?
+			if nusers.empty?
 				h.h1{"Incorrect verification code"}
 			else
 				user = users.first
@@ -410,6 +420,7 @@ get '/verify.fgh' do
 		end
 	end
 end
+
 #=begin
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	log = ""
@@ -429,7 +440,7 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
   name = CGI.escapeHTML(name)
   paras= (chap.nil? ? [{:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"}] : getarray(chap[:paras]).order(:id).all.map{|o| DB[:paras].where(:id => o[:val]).all.first })
   # error "ITS NOT FINISHED YET!"
-	template("#{name} - Storybouncer") do |h|
+	template("#{name}") do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
 				if chap_num > 1
