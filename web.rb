@@ -13,6 +13,12 @@ enable :sessions
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 set :show_exceptions, false
 
+def getpass
+  puts
+  puts "ENTER YOUR PASSWORD:"
+  return gets.chomp
+end
+
 if ENV['TESTING_ENV'].nil?
   Pony.options = {
     :via => :smtp,
@@ -27,7 +33,14 @@ if ENV['TESTING_ENV'].nil?
     }
   }
 else
-  Pony.options = { :via => :sendmail, :from => "iforgotoincludeafromaddress@storybouncer.com" }
+  Pony.options = {
+    :via => :smtp,
+    :via_options =>  {
+      :address              => 'localhost',
+      :port                 => '12345',
+    },
+    :from => "iforgotoincludeafromaddress@storybouncer.com" 
+  }
 end 
 $site_name = "www.storybouncer.com" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)

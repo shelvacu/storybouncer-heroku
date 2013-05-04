@@ -26,7 +26,7 @@ bookid = DB[:books].insert(:auth => userid,
                   :name => nameid)
 chapids = []
 chaps.each do |key,val|
-  paraid = DB[:paras].insert(:auth => userid,:an =>"",:text => val.join("\n"),:upvotes => makearray, :downvotes => makearray)
+  paraid = DB[:paras].insert(:auth => userid,:an =>"",:text => val.join("\n").gsub("\n\n","\r").gsub("\n"," ").gsub("\r","\n\n"),:upvotes => makearray, :downvotes => makearray)
   paraarray = makearray
   getarray(paraarray).insert(:val => paraid)
   chapids << {:val => DB[:chaps].insert(:paras => paraarray, :name => key)}

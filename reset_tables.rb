@@ -36,7 +36,7 @@ DB.create_table! :users do
   TrueClass   :veri
   Integer     :subs #arr
   Integer     :hist #arr
-  Time        :ban => Time.at(0) #d-fault 2 epoch
+  Time        :ban ,:default => Time.at(0) #d-fault 2 epoch
 end
 
 DB.create_table! :names do
