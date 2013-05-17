@@ -1,6 +1,6 @@
 **0: Decide on way to mark things :done
 **0.5: Add git backup
-0.75: SQL DBackup
+**0.75: SQL DBackup(server-side)
 1: Better session managment, on sql database.
 2: Add "Add paragraph"
 3: Allow voting:
@@ -12,7 +12,7 @@
 9: Password reset/known pass
 10:Password reset/unknown (by email)
 10.5: Display recent books on front page
-11:Put up "nothing will stay" warnings
+11:Fully setup SQL backups
 --------------------------------
 12: Release Alpha
 --------------------------------

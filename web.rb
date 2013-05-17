@@ -4,6 +4,7 @@ require './html-maker'
 require './local_sequel'
 require 'pony'
 require 'pp'
+require 'yaml'
 require 'cgi' #SOOO MANY LIBRARIEZZZZZ!
 
 if DB.tables.empty? #database has not been generated, it needs to be
@@ -528,14 +529,14 @@ get '/ip.fgh' do
     h.h1{"#{request.ip}"}
   end
 end
+get '/db/dump.yaml' do
+  error 404 unless params[:pass] == "OMGthisIsAsoupers33cr3tp4sswordOMG"
+  content_type 'application/x-yaml', :encoding => "utf-8"
+  tables = DB.tables
+  hash_db = Hash[ tables.zip( tables.map{|t| DB[t].all} ) ]
+  hash_db.to_yaml
+end
     
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
 #end
-
-
-
-
-
-
-
