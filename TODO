@@ -1,5 +1,5 @@
 **0: Decide on way to mark things :done
-0.5: Add git backup
+**0.5: Add git backup
 0.75: SQL DBackup
 1: Better session managment, on sql database.
 2: Add "Add paragraph"
