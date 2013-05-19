@@ -1,6 +1,5 @@
 require 'sequel'
 require 'jdbc/postgres'
-Jdbc::Postgres.load_driver
 def getarray(id)
   return DB[:"array#{id}"]
 end
@@ -13,4 +12,3 @@ def makearray(type = Integer,name = :val)
   return id
 end
 DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'] || 'sqlite://local.db')
-
