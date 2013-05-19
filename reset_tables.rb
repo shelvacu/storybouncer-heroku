@@ -57,7 +57,16 @@ DB.tables.each do |table_name|
   DB.drop_table(table_name) if /array\d+/ === table_name
 end
 
-# DB.create_table! :notif do
-#   primary_key :id
-#   String :email
-# end
+DB.create_table? :notif do #note the ? instead of !: i don't want to delete this table if i can help it.
+  primary_key :id
+  String :email
+end
+
+DB.create_table! :sessi do
+  primary_key :id
+  String      :key
+  Time        :usetime
+  Integer     :userid
+  String      :useragent
+  String      :ip
+end

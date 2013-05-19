@@ -11,8 +11,16 @@ if DB.tables.empty? #database has not been generated, it needs to be
   require './reset_tables.rb'
 end
 enable :sessions
+set :server, :webrick
 set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
-set :show_exceptions, false
+if development?
+  set :show_exceptions, true
+  require 'sinatra/reloader'
+  puts "-------DEVELOPMENT--------"
+else
+  set :show_exceptions, false
+  puts "-------PRODUCTIONN--------"
+end
 
 def getpass
   puts
