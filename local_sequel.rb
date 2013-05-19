@@ -1,6 +1,4 @@
 require 'sequel'
-require 'jdbc/postgres'
-Jdbc::Postgres.load_driver
 def getarray(id)
   return DB[:"array#{id}"]
 end
