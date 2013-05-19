@@ -1,5 +1,6 @@
 require 'sequel'
 require 'jdbc/postgres'
+Jdbc::Postgres.load_driver
 def getarray(id)
   return DB[:"array#{id}"]
 end
@@ -11,8 +12,9 @@ def makearray(type = Integer,name = :val)
   end
   return id
 end
-#puts "RUBY_ENGINE = #{RUBY_ENGINE}"
-#DB = Sequel.connect((RUBY_ENGINE == 'jruby' ? 'jdbc:' : "")+(ENV['JUSTONEDB_DBI_URL'] || 'sqlite:local.db'))
+puts "RUBY_ENGINE = #{RUBY_ENGINE}"
+DB = Sequel.connect((RUBY_ENGINE == 'jruby' ? 'jdbc:' : "")+(ENV['JUSTONEDB_DBI_URL'] || 'sqlite:local.db'))
+=begin
 if (db_url = ENV['JUSTONEDB_DBI_URL'])
   parts = db_url.split("//")
   protocol = parts[0]
@@ -25,3 +27,4 @@ if (db_url = ENV['JUSTONEDB_DBI_URL'])
 else
   DB = Sequel.connect('jdbc:sqlite:local.db')
 end
+=end
