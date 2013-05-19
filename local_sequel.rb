@@ -10,4 +10,5 @@ def makearray(type = Integer,name = :val)
   end
   return id
 end
-DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'] || (RUBY_ENGINE == 'jruby' ? 'jdbc:sqlite:local.db' : 'sqlite://local.db') )
+puts "RUBY_ENGINE = #{RUBY_ENGINE}"
+DB = Sequel.connect((RUBY_ENGINE == 'jruby' ? 'jdbc:' : "")+(ENV['JUSTONEDB_DBI_URL'] || 'sqlite:local.db'))
