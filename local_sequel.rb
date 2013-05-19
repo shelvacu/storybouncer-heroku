@@ -1,4 +1,5 @@
 require 'sequel'
+require 'jdbc-postgres'
 def getarray(id)
   return DB[:"array#{id}"]
 end
