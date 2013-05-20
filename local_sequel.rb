@@ -1,4 +1,6 @@
 require 'sequel'
+require 'jdbc/postgres'
+
 def getarray(id)
   return DB[:"array#{id}"]
 end
@@ -10,4 +12,4 @@ def makearray(type = Integer,name = :val)
   end
   return id
 end
-DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'] || 'sqlite://local.db')
+DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'].gsub("postgres:","jdbc:postgresql") || 'jdbc:sqlite:local.db')
