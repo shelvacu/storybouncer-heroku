@@ -1,0 +1,13 @@
+IMPORTANT: Create a script to auto-update(extend) the session every minute if a mouse has been moved/keys have been typed
+
+
+:sessi
+ -id
+ -key: randomly-generated alphanumeric string 64 characters long (str)
+ -usetime: Time the session was last used
+ -userid: id of user whom the session belongs to (int)
+ -useragent: Given user-agent by the browser (str)
+ 			what if the user-agent doesn't match? : Force re-login (resulting in a new session/key)
+ -ip: ip address of user. if ip changes, change this value (str)
+ 			Ip is allowed to change since clients may change from wifi to mobile network, or between wifi networks
+ (nothing else I can think of)
