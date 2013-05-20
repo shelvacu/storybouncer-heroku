@@ -15,7 +15,8 @@ end
 #DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'].gsub("postgres:","jdbc:postgresql") || 'jdbc:sqlite:local.db')
 if (url = ENV['JUSTONEDB_DBI_URL'])
   m = url.match(/:\/\/(?<user>\w+):(?<pass>\w+)@(?<else>.*)/)
-  DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&pass=#{m[:pass]}")
+  DB = Sequel.connect("jdbc:postgresql:///#{m[:user]}:#{m[:pass]}@#{m[:else]}")
+  #DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&pass=#{m[:pass]}")
 else
   DB = Sequel.connect("jdbc:sqlite:local.db")
 end
