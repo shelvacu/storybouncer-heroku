@@ -19,3 +19,4 @@ if (url = ENV['JUSTONEDB_DBI_URL'])
 else
   DB = Sequel.connect("jdbc:sqlite:local.db")
 end
+#
