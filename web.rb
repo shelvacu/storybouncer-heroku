@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'digest'
-require './html-maker'
+require './template'
 require './local_sequel'
 require 'pony'
 require 'pp'
@@ -11,14 +11,8 @@ if DB.tables.empty? #database has not been generated, it needs to be
   require './reset_tables.rb'
 end
 enable :sessions
-set :session_secret, "pinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
+set :session_secret, "RAGEGAMINGVIDEOSpinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 set :show_exceptions, false
-
-def getpass
-  puts
-  puts "ENTER YOUR PASSWORD:"
-  return gets.chomp
-end
 
 if ENV['TESTING_ENV'].nil?
   Pony.options = {
@@ -54,65 +48,38 @@ def valid_username?(name)
 	return false
 end
 
-def makehtml #(&block)
-	h = HTMLMaker.new
-	h << "<!DOCTYPE html>\n"
-	h.html{yield h}#block.call(h)}
-	return h.to_s
+
+
+#SESSI
+=begin
+before do
+  if !(id = session[:sessid]).nil?
+    if DB[:sessi].where(:id => id).update(:usetime => Time.now) == 0
+      session[:sessid] = nil
+      sessi[:dead] = true
+    else
+      sessi[:dead] = false
+      req = DB[:sessi].where(:id => id)
+      sessi = JSON.parse(req.all[:data]).merge(sessi)
+    end
+  else
+    sessi[:dead] = true
+  end
 end
-#blarg
-def template(pagename="missing title!",js = [],css = [],&block)
-	css << '/main.css'
-  js  << '/reposition.js'
-  js.insert(0,"https://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
-	pagename += " - Storybouncer"
-  return makehtml do |h|
-		h.head do
-			h.title{pagename}
-			css.each do |name|
-				h.link(:href => name,:rel => "stylesheet",:type => "text/css")
-			end
-			js.each do |name|
-				h.script(:type => 'text/javascript',:src => name){}
-			end
-		end
-		h.body do
-			h.noscript{'<span style="margin-left:auto;margin-right:auto;">This site won\'t be as pretty without javascript.'}
-      h.div(:id => 'topbar') do
-				h.img(:id => "toplogo",:src => '/smalllogo.gif')
-				h.span(:id => 'stateinfo') do
-					if session[:logged]
-						h << "#{session[:user]} | "
-						h.a(:href => '/usercp.fgh', :id => 'managelink'){"UserCP"}
-						h << " | "
-						h.a(:href => '/logout.fgh', :id => 'logoutlink'){"Logout"}
-					else
-						h.a(:href => '/login.fgh', :id => 'managelink'){"Login"}
-            h << " | "
-            h.a(:href => '/register.fgh', :id => 'regsiterlink'){"Register"}
-					end
-				end
-			end
-			h.div(:id => 'mainContainer'){
-				h.div(:id => 'main'){
-					block.call(h)
-				}
-			}
-			h.div(:id => "bottombar") do
-				h.div(:id => "innerbottombar") do
-					h.span(:id => "copy"){"Created by and Copyright &copy; Shelvacu Vevevende"}
-					#h.span(:id => "donatelink") do
-					h.a(:id => "donatelink",:href => "/donate.fgh"){"Donate"}
-					#end
-				end
-			end
-		end
-	end
-end
+
+after do
+  if !session[:sessid].nil?
+    while DB[:sessi].where(:id => session[:sessid],:lock => false).update(:lock => true) == 0
+      #is locked OR sessi doesn't exist
+      DB[:sessi].where(:id => session[
+      sleep(0.1)
+    
+##### !FINISHED
+=end
 error do
 	err = env['sinatra.error']
 	Pony.mail(	:from => "error@storybouncer.com",:to => "shelvacu@gmail.com", :subject => err.class.to_s,
-				:body => "Current session:#{session.inspect}\n#{err.message}\n\n#{err.backtrace.join("\n")}" )
+				:body => "Current session:#{session.pretty_print}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" )
 	template("Error") do |h|
 		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
 	end

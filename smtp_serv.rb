@@ -4,7 +4,7 @@ Thread.abort_on_exception = true
 
 $logfile = "/home/shelvacu/emails"
 if !File.exist?($logfile)
-  File.open($logfile,'w'){}
+  File.open($logfile,'wt'){}
 end
 $f = File.open($logfile,'at')
 END{$f.close}

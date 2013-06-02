@@ -53,6 +53,16 @@ DB.create_table! :array do
   primary_key :id
 end
 
+DB.create_table! :sessi do
+  primary_key :id
+  Time :usetime
+  Integer :userid
+  String :useragent
+  String :ip
+  String :data
+  TrueClass :lock
+end
+
 DB.tables.each do |table_name|
   DB.drop_table(table_name) if /array\d+/ === table_name
 end
