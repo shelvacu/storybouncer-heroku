@@ -3,6 +3,7 @@
 **0.75: SQL DBackup(server-side)
 **0.875: get jruby to work!
 **1: Better session managment, on sql database. NEVERMIND JUST WAIT FOR STACK OVERFLOW
+1.5: View suggested paragraphs
 2: Add "Add paragraph"
 3: Allow voting:
 4: Test viewing of many paras
