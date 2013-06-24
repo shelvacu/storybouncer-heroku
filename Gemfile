@@ -6,5 +6,5 @@ gem 'jdbc-postgres'
 gem 'sequel'
 gem 'pony'
 group :development do
-  gem 'sqlite3'
+  gem 'jdbc-sqlite3'
 end

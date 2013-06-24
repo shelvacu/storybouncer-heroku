@@ -17,6 +17,8 @@ if (url = ENV['JUSTONEDB_DBI_URL'])
   m = url.match(/:\/\/(?<user>\w+):(?<pass>\w+)@(?<else>.*)/)
   DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&password=#{m[:pass]}")
 else
+  require 'jdbc/sqlite3'
+  Jdbc::SQLite3.load_driver
   DB = Sequel.connect("jdbc:sqlite:local.db")
 end
 #
