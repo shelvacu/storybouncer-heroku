@@ -35,8 +35,9 @@ else
       :address              => 'localhost',
       :port                 => '12345',
     },
-    :from => "iforgotoincludeafromaddress@storybouncer.com" 
+    :from => "iforgotoincludeafromaddressiapologize@storybouncer.com" 
   }
+  require 'sinatra/reloader'
 end 
 $site_name = "www.storybouncer.com" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)
@@ -105,19 +106,26 @@ get '/' do
 	$h.html do
 		$h.head{
 			$h.title{"Storybouncer!"}
-			$h.style{"img{margin:0px auto}"}	
+			$h.style{"img{margin:0px auto}
+.desc{
+		width:400px;
+		margin-right:auto;
+		margin-left:auto;
+		font-family:sans-serif;
+}"}	
 		}
 		$h.body("style" => 'text-align:center') do
       $h.div() do
         $h.img(:src => '/logo.gif')
-        $h.h1(:id => 'awesome'){"Currently in development"}
-        # $h.img(:src => "http://thelazy.info/wp-content/uploads/2010/12/hello-world-2-600x4011.jpg")
-        if win
-          $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
-        end
+        # $h.h1(:id => 'awesome'){"Currently in development"}
+        #if win
+        #  $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
+        #end
       end
-      $h.h1{"What is Storybouncer?"}
-      $h.p(:style => "width:400px;margin-right:auto;margin-left:auto;"){"You start with a book. Someone(possibly you) creates an (imcomplete) book with a name and one paragraph. Then multiple other people(like you) come along and suggest what the next paragraph should be. All of the suggestions are voted on by everyone(you!) and the para with the most votes gets added to the book. This repeats until everyone votes to end the book. That is what Storybouncer is."}
+      $h.h1{"Writing. Crowdsourced"}
+      $h.p(:class => "desc"){"How it works:"}
+      $h.p(:class => "desc"){"Someone makes a \"book\" consisting of a title, and a single paragraph. Everyone reads this, and following the same idea of the story someone writes another paragraph, a suggested paragraph. And another person. And another. Then, all the suggested paragraphs are voted on by the community, and the one with the most votes is selected to be part of the story. The process then repeats, and a story is born."}
+      $h.h3{"Currently being developed, sorry"}
       $h.div do
         $h.h3{"Would you like to know when it's done? Sign-up here!"}
         $h.form(:method => "post") do
@@ -134,6 +142,12 @@ post '/' do
     h.h2 do
       if params[:email].nil?
         "YOU DID IT WRONG! D:"
+      elsif params[:email] == ""
+        "Oh! Your email is \"\"? Don't worry, you're already on our list!\n(you didn't enter an email)"
+      elsif not /.*@.*\..*/ === params[:email]
+        "That doesn't look like a valid email."
+      elsif params[:email] == "@."
+        "Haha, very funny."
       else
         DB[:notif].insert(:email => params[:email])
         "Thanks! You will be notified when Storybouncer is released!"

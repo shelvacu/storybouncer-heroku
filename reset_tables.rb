@@ -17,7 +17,7 @@ end
 
 DB.create_table! :books do
 	primary_key :id
-	Integer     :auth
+	Integer     :auth #or
   Integer     :chaps #arr
   Integer     :endvotes #arr
   Integer     :noendvotes #arr

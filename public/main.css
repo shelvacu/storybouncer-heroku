@@ -1,6 +1,14 @@
 html,body{
 		height:100%
 }
+
+.desc{
+		width:400px;
+		margin-right:auto;
+		margin-left:auto;
+		font-family:sans-serif;
+}
+
 *{ /*t r b l; t rl b; tb rl; tbrl*/
 	margin-left:auto;
 	margin-right:auto;
