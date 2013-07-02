@@ -35,7 +35,7 @@ else
       :address              => 'localhost',
       :port                 => '12345',
     },
-    :from => "iforgotoincludeafromaddressiapologize@storybouncer.com" 
+    :from => "iforgotoincludeafromaddressIapologize@storybouncer.com" 
   }
   require 'sinatra/reloader'
 end 
@@ -80,7 +80,7 @@ after do
 error do
 	err = env['sinatra.error']
 	Pony.mail(	:from => "error@storybouncer.com",:to => "shelvacu@gmail.com", :subject => err.class.to_s,
-				:body => "Current session:#{session.pretty_print}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" )
+				:body => "Current session:#{session.pretty_inspect}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" )
 	template("Error") do |h|
 		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
 	end
@@ -406,22 +406,21 @@ end
 #=begin
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	log = ""
-	return "nup, no id" if params[:id].nil?
+	#return "nup, no id" if params[:id].nil?
+  error 404 if params[:id].nil?
 	params[:id] = params[:id].to_i
 	
 	return "book does not exist" if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
-	#params[:chap] = 1 if params[:chap].nil?
-	#params[:chap] = params[:chap].to_i
   chap_num = (params[:chap] || 1).to_i
-#log += "Assuming chap##{params[:chap]}\n"	
-	book = DB[:books].where(:id => params[:id]).all.first
+	book = DB[:books].first(:id => params[:id])
   chaps = getarray(book[:chaps])
   chap_id = chaps.order_by(:val).limit(1,chap_num-1).all[0][:val]
   chap = DB[:chaps].where(:id => chap_id).all.first
   name = (chap.nil? ? "Chapter not here(yet)" : chap[:name])
   name = CGI.escapeHTML(name)
-  paras= (chap.nil? ? [{:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"}] : getarray(chap[:paras]).order(:id).all.map{|o| DB[:paras].where(:id => o[:val]).all.first })
-  # error "ITS NOT FINISHED YET!"
+  paras= (chap.nil? ? [{:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"}] : getarray(chap[:paras]).order(:id).all.map{|o| DB[:paras].first(:id => o[:val]) })
+  pparas=(chap.nil? ? [] : getarray(book[:pparas]).order{random{}}.all)
+  fin  = (book[:fin] == 't')
 	template("#{name}") do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
@@ -443,6 +442,21 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 						h.p(:class => 'paratext'){CGI.escapeHTML(para[:text]).gsub("\n","<br/>")}
 						h.br
 					end
+          h << pparas.pretty_inspect
+          if !fin
+            pparas.each do |para|
+              h.div(:class => 'pparaContainer') do
+                h.p(:class => 'pparaText'){"#{para[:text]}"}
+                h.br
+                h.span(:class => 'pparaAuthor'){h.span{"-A person"}}
+              end
+            end
+            
+            h.div(:class => 'addsuggested') do
+              h.h5{"Suggest a continuation!"}
+              h << "uhh.... to be added. Eventually."
+            end
+          end
 				end
 			end
 			h.td(:class => 'nextContainer') do
@@ -458,6 +472,22 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 			end
 		end
 	end
+end
+
+get '/booklist.fgh' do 
+  template('ALL the books!') do |h|
+    h.div(:class => 'booklist') do
+      DB[:books].all.each do |book|
+        h.span(:class => 'booklisting') do
+          nameid = book[:name]
+          namething = DB[:names].first(:id => nameid)
+          name = namething[:name]
+          h.a(:href => "/view/book.fgh?id=#{book[:id]}"){name}
+        end
+        h.br
+      end
+    end
+  end
 end
 =begin
 get "/routes.txt" do
@@ -517,7 +547,6 @@ get '/db/dump.yaml' do
   hash_db = Hash[ tables.zip( tables.map{|t| DB[t].all} ) ]
   hash_db.to_yaml
 end
-    
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
 #end

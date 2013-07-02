@@ -46,7 +46,7 @@ DB.create_table! :names do
 	String      :name
  	Integer	  	:upvotes #arr
  	Integer	  	:downvotes
-  TrueClass   :fin #when voting ends
+  TrueClass   :fin, :default => false #when voting ends
 end
 
 DB.create_table! :array do

@@ -110,6 +110,24 @@ body{
 	margin-bottom:25px;
 	line-height:30px;
 }
+#storyname{
+	text-align:center;
+}
+.paratext{
+	text-align:left;
+}
+
+.pparaContainer{
+	border:3px solid black;
+	text-align:left;
+	width:50%;
+}
+
+.pparaAuthor{
+		color:#888;
+		text-align:right;
+		width:100%;
+}
 /* usercp.fgh */
 .left,
 .right{ padding:5px; }

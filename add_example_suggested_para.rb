@@ -25,6 +25,12 @@ END
 puts 'loaded'
 
 authid = DB[:users].where(:user => "shelvacu").all[0][:id]
+nameid = DB[:names].insert(:auth => authid,
+                           :name => name,
+                           :upvotes => makearray,
+                           :downvotes => makearray,
+                           :fin => false)
+puts 'got author id'
 chapsid = makearray
 pparas = makearray
 bookid = DB[:books].insert(:auth => authid, 
@@ -35,28 +41,34 @@ bookid = DB[:books].insert(:auth => authid,
                   :fin => false,
                   :pnames => makearray,
                   :name => nameid)
-paras = makearray
+puts 'inserted book'
+parasid = makearray
+puts 'is it getarray()?'
+paras = getarray(parasid)
+puts 'NOO!'
 chap1 = DB[:chaps].insert(:name => 'Chapter 1',
-                          :paras => paras)
-chapsid.insert(:val => chap1)
+                          :paras => parasid)
+puts 'made chapter'
+getarray(chapsid).insert(:val => chap1)
 para = DB[:paras].insert(:auth => authid,
-                         :an => "I don't even know man, it was just, whatever came to my head."
+                         :an => "I don't even know man, it was just, whatever came to my head.",
                          :text => firstpara,
                          :upvotes => makearray,
                          :downvotes => makearray)
+puts 'made para'
 paras.insert(:val => para)
+puts 'inserted para'
 
 puts "almost done!"
 
-pparas.insert(:val => DB[:paras].insert(:auth => authid, 
+getarray(pparas).insert(:val => DB[:paras].insert(:auth => authid, 
                                         :an => "the 'youre' instead of 'your' is on purpose, so i can test the edit feature",
-                                        :text => <<END
-"OH MY GOD!!" screamed Mommy, "YOU'RE MUSCLES!"
+                                        :text => '
+"OH MY GOD!!" screamed Mommy, "YOU\'RE MUSCLES!"
 
 "What are you--WBLAH!"
 
-Tommy slowly realized that his muscles were bigger than normal human beings. He had begun to wonder why the table and his mother had gotten so small
-END
+Tommy slowly realized that his muscles were bigger than normal human beings. He had begun to wonder why the table and his mother had gotten so small',
                                         :upvotes => makearray,
-                                        :downvotes => makearray)
+                                        :downvotes => makearray))
 puts "I /think/ it's done, but i have NO idea."
