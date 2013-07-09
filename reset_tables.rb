@@ -1,6 +1,6 @@
 require './local_sequel'
 DB.create_table! :paras do
-	primary_key :id
+	primary_key :id, :index=>{:unique=>true}
 	Integer 	:auth
 	String		:an 		#author's note
 	String		:text 		#actual paragraph text
@@ -10,13 +10,13 @@ DB.create_table! :paras do
 end
 
 DB.create_table! :chaps do
-  primary_key :id
+  primary_key :id, :index=>{:unique=>true}
   Integer     :paras
   String      :name
 end
 
 DB.create_table! :books do
-	primary_key :id
+	primary_key :id, :index=>{:unique=>true}
 	Integer     :auth #or
   Integer     :chaps #arr
   Integer     :endvotes #arr
@@ -28,10 +28,10 @@ DB.create_table! :books do
 end
 
 DB.create_table! :users do
-  primary_key :id
-  String      :user
+  primary_key :id, :index=>{:unique=>true}
+  String      :user, :unique => true
   String      :pass
-  String      :email
+  String      :email, :unique => true
   String      :emailver
   TrueClass   :veri
   Integer     :subs #arr
@@ -41,7 +41,7 @@ DB.create_table! :users do
 end
 
 DB.create_table! :names do
-	primary_key	:id
+	primary_key	:id, :index=>{:unique=>true}
   Integer     :auth#or
 	String      :name
  	Integer	  	:upvotes #arr
@@ -52,7 +52,7 @@ end
 DB.create_table! :array do
   primary_key :id
 end
-
+=begin
 DB.create_table! :sessi do
   primary_key :id
   Time :usetime
@@ -62,7 +62,7 @@ DB.create_table! :sessi do
   String :data
   TrueClass :lock
 end
-
+=end
 DB.tables.each do |table_name|
   DB.drop_table(table_name) if /array\d+/ === table_name
 end
