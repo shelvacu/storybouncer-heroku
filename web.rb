@@ -386,11 +386,11 @@ get '/usercp.fgh' do
 				h.tr do
 					h.td(:class => 'left'){"Ban release date:"}
 					h.td(:class => 'right') do
-						if userinfo[:ban] > Time.now
-							userinfo[:ban].strftime("%H:%Mhrs on %B %e, %Y")
-						else
+						#if userinfo[:ban] > Time.now
+						#	userinfo[:ban].strftime("%H:%Mhrs on %B %e, %Y")
+						#else
 							"Not banned!"
-						end
+						#end
 					end
 				end
 			end
