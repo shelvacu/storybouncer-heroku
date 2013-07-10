@@ -8,3 +8,4 @@ gem 'pony'
 group :development do
   gem 'jdbc-sqlite3'
 end
+gem 'rufus-scheduler'

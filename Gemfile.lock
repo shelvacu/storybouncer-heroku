@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.3.0)
+    eventmachine (1.0.3)
     eventmachine (1.0.3-java)
     jdbc-postgres (9.2.1002.1)
     jdbc-sqlite3 (3.7.2.1)
@@ -17,6 +18,8 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rufus-scheduler (2.0.19)
+      tzinfo (>= 0.3.23)
     sequel (3.47.0)
     sinatra (1.4.2)
       rack (~> 1.5, >= 1.5.2)
@@ -33,6 +36,7 @@ GEM
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
+    tzinfo (1.0.1)
 
 PLATFORMS
   java
@@ -41,6 +45,7 @@ DEPENDENCIES
   jdbc-postgres
   jdbc-sqlite3
   pony
+  rufus-scheduler
   sequel
   sinatra
   sinatra-contrib

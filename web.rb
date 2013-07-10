@@ -2,6 +2,7 @@ require 'sinatra'
 require 'digest'
 require './html-maker'
 require './local_sequel'
+require './ping_self'
 require 'pony'
 require 'pp'
 require 'yaml'
@@ -544,6 +545,11 @@ get '/db/dump.yaml' do
   tables = DB.tables
   hash_db = Hash[ tables.zip( tables.map{|t| DB[t].all} ) ]
   hash_db.to_yaml
+end
+
+#TIME TO DEMO DAY
+get '/ttdd/?' do
+  redirect to("/ttdd/index.html")
 end
     
 #get '/except.fgh' do
