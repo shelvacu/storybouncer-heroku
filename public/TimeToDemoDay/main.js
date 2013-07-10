@@ -12,7 +12,7 @@ var s=1000,m=(s*60),h=(m*60),d=(h*24),w=(d*7);
 function doStuff(){
 		//now = new Date();
 		secondsLeft = (demoDay.getTime() - Date.now());
-		secondsBox.innerText = divmod(secondsLeft,100)[0];
+		secondsBox.innerText = divmod(secondsLeft,1000)[0];
 		//w,d,h,m
 		weeksLeft= divmod(secondsLeft,w);
 		daysLeft = divmod(weeksLeft[1],d);
