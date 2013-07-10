@@ -411,7 +411,7 @@ get '/verify.fgh' do
 			end
 		else
 			users = DB[:users].where(:emailver => params[:key]).all
-			if nusers.empty?
+			if users.empty?
 				h.h1{"Incorrect verification code"}
 			else
 				user = users.first
