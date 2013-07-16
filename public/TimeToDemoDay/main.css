@@ -1,0 +1,16 @@
+* { 
+		text-align:center;
+		color:#0F0;
+		background-color:#000;
+		font-family:monospace;
+}
+
+#title{
+		font-size:100px;
+		border:5px solid #0F0;
+		width:75%;
+		margin:auto;
+}
+
+h1{ font-size:75px; }
+h3{ font-size:25px; }

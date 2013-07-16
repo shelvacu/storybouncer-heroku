@@ -2,6 +2,7 @@ require 'sinatra'
 require 'digest'
 require './template'
 require './local_sequel'
+require './ping_self'
 require 'pony'
 require 'pp'
 require 'yaml'
@@ -334,11 +335,11 @@ get '/usercp.fgh' do
 				h.tr do
 					h.td(:class => 'left'){"Ban release date:"}
 					h.td(:class => 'right') do
-						if userinfo[:ban] > Time.now
-							userinfo[:ban].strftime("%H:%Mhrs on %B %e, %Y")
-						else
+						#if userinfo[:ban] > Time.now
+						#	userinfo[:ban].strftime("%H:%Mhrs on %B %e, %Y")
+						#else
 							"Not banned!"
-						end
+						#end
 					end
 				end
 			end
@@ -359,7 +360,7 @@ get '/verify.fgh' do
 			end
 		else
 			users = DB[:users].where(:emailver => params[:key]).all
-			if nusers.empty?
+			if users.empty?
 				h.h1{"Incorrect verification code"}
 			else
 				user = users.first
@@ -659,6 +660,11 @@ get '/db/dump.yaml' do
   tables = DB.tables
   hash_db = Hash[ tables.zip( tables.map{|t| DB[t].all} ) ]
   hash_db.to_yaml
+end
+
+#TIME TO DEMO DAY
+get '/ttdd/?' do
+  redirect to("/ttdd/index.html")
 end
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
