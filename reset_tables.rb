@@ -1,6 +1,6 @@
 require './local_sequel'
 DB.create_table! :paras do
-	primary_key :id, :index=>{:unique=>true}
+	primary_key :id, :index =>{:unique=>true}
 	Integer 	:auth
 	String		:an 		#author's note
 	String		:text 		#actual paragraph text
@@ -10,13 +10,13 @@ DB.create_table! :paras do
 end
 
 DB.create_table! :chaps do
-  primary_key :id, :index=>{:unique=>true}
+  primary_key :id, :index =>{:unique=>true}
   Integer     :paras
   String      :name
 end
 
 DB.create_table! :books do
-	primary_key :id, :index=>{:unique=>true}
+	primary_key :id, :index =>{:unique=>true}
 	Integer     :auth #or
   Integer     :chaps #arr
   Integer     :endvotes #arr
@@ -28,7 +28,7 @@ DB.create_table! :books do
 end
 
 DB.create_table! :users do
-  primary_key :id, :index=>{:unique=>true}
+  primary_key :id, :index =>{:unique=>true}
   String      :user, :unique => true
   String      :pass
   String      :email, :unique => true

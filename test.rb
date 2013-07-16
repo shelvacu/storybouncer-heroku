@@ -1,4 +1,4 @@
-require 'sequel'
-require 'jdbc/postgres'
-DB = Sequel.connect("jdbc:postgresql://bla/bla")
-DB.tables
+require './templatecopy'
+session = {}
+session[:logged] = false
+puts template('test'){'lol'}

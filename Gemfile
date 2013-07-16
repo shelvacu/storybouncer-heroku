@@ -6,6 +6,7 @@ gem 'sinatra-contrib'
 gem 'jdbc-postgres'
 gem 'sequel'
 gem 'pony'
+gem 'json-jruby'
 group :development do
   gem 'jdbc-sqlite3'
 end

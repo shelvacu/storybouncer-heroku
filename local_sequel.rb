@@ -2,6 +2,10 @@ require 'sequel'
 require 'jdbc/postgres'
 require 'time'
 
+module Boolean; end
+class TrueClass; include Boolean; end
+class FalseClass; include Boolean; end
+
 def getarray(id)
   return DB[:"array#{id}"]
 end
@@ -28,6 +32,8 @@ DB.tables #this forces sequel to actually connect, to test
 
 class TableDoesntExist < StandardError
 end
+class ItemDoesntExist < StandardError
+end
 
 module ArrayIncludeable
   def def_attr_array(name,col_name=name,klass)
@@ -40,13 +46,21 @@ end
 
 class DBItem
   class << self
-    def create(args = {},tablename)
-      args = @@default_create.merge(args)
+    def create(args = {},tablename = @tablename)
+      #args = @@default_create.merge(args)
+      s = args.map do |key,val|
+        val = val.id if val.is_a?(DBItem)
+        [key,val]
+      end
+      args = Hash[s]
       id = DB[tablename].insert(args)
       return self.new(id)
     end
     def all
       DB[tablename].select(:id).all.map{|o| self.new(o[:id])}
+    end
+    def columns
+      DB[tablename].columns
     end
     attr_reader :tablename
   end
@@ -61,6 +75,8 @@ class DBItem
     @table = DB[tablename]
     @cache = nil #initialize, not sure if this is neccecary
     raise TableDoesntExist, "table #{tablename.inspect} doesn't exist" unless DB.tables.include? tablename
+    raise ItemDoesntExist, "Item with id #{id} doesn't exist" if @table.where(id:@id).empty?
+    @table = @table.where(id:@id)
     update_cache if get_cache
   end
   
@@ -76,7 +92,7 @@ class DBItem
   end
 
   def getall
-    @cache = @table.first(id:@id)
+    @cache = @table.first
   end
   alias update_cache getall
   
@@ -90,7 +106,7 @@ class DBItem
       return @cache[name]
     else
       #getall[name]
-      @table.select(name).first(id:@id)[name]
+      @table.select(name).first[name]
     end
   end
   alias get getattr
@@ -140,7 +156,8 @@ class DBArray
     @type = type
   end
   attr_reader :id
-  
+  attr_reader :set
+
   def ==(other)
     return false unless other.class == self.class
     self.id == other.id
@@ -154,6 +171,10 @@ class DBArray
     @set.all.map{|o| @type.new(o[:val])}
   end
   alias to_a all
+  
+  def all_order_rand
+    @set.order_by{random{}}.all.map{|o| @type.new(o[:val])}
+  end
   
   def <<(thing)
     if thing.is_a?(Integer)
@@ -188,6 +209,21 @@ class DBArray
   def include?(item)
     item = item.id if item.is_a?(DBItem)
     return (@set.where(:val => item).count) > 0
+  end
+  
+  def [](index,order_by = :id)
+    ret = @set.order_by(:id).limit(1,index).first[:val]
+    if ret.nil?
+      return nil
+    else
+      return @type.new ret
+    end
+  end
+  
+  def []=(index,obj,order_by = :id)
+    obj = obj.id if obj.class == @type
+    ret = @set.order_by(:id).limit(1,index).update(:val => obj)
+    return (ret == 0 ? nil : obj)
   end
 end
 
@@ -244,6 +280,23 @@ module VoteableItem
     return false if downvotes.include?(user)
     return nil
   end
+  
+  def unvote(user) # Remove a vote
+    upvotes.delete(user)
+    downvotes.delete(user)
+  end
+  
+  def re_vote(uzer,up_down) # Vote again & undo prev
+    vote = voted_on(uzer)
+    return vote if vote = up_down
+    unvote(user)
+    if up_down
+      upvotes << user
+    elsif up_down == false # make sure it isn't nil
+      downvotes << user
+    end
+    up_down
+  end
 end
 
 
@@ -277,6 +330,10 @@ class Chap < DBItem
   attr_accessor :name
   #def_array(:pnames,Name) #Eventual-e!
   def_array(:paras,Para)
+  def namestr
+    name.to_s
+  end
+  alias strname namestr
 end
 VotableItem = VoteableItem
 
@@ -302,9 +359,10 @@ class Book < DBItem
   def_array(:chaps,Chap)
   def_array(:pparas,Para)
   def fin
-    self[:fin] == "t"
+    !!self[:fin]
   end
   alias finished fin
+  alias fin? fin
   def fin=(bool)
     self[:fin] = !!bool
   end
@@ -319,6 +377,12 @@ class Book < DBItem
   def namestr
     name.name
   end
+  alias strname namestr
+  
+  def inspect
+    "#<Book: ##{id} \"#{namestr}\">"
+  end
+  alias to_s inspect
 end
 
 class User < DBItem
@@ -337,7 +401,7 @@ class User < DBItem
   alias username user
   
    def veri
-    self[:veri] == 't'
+    !!self[:veri]
   end
   
   def veri=(stuff)
@@ -345,6 +409,10 @@ class User < DBItem
   end
   def_array(:subs,Book)
   def_array(:hist,Book)
+  
+  def inspect
+    "#<User ##{id} \"#{name}\">"
+  end
 end
 class Name < DBItem
   class << self
@@ -377,5 +445,5 @@ class Name < DBItem
   end
   def fin=(ob)
     self[:fin] = !!ob
-  end
+  end  
 end

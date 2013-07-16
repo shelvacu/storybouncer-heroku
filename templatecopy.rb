@@ -7,11 +7,8 @@ def makehtml #(&block)
 	return h.to_s
 end
 #blarg
-def template(pagename="Missing title!",js = [],css = [],&block)
-  js = [js] unless  js.is_a?(Array)
-  css=[css] unless css.is_a?(Array)
-	css << '/reset.css'
-  css << '/main.css'
+def template(pagename="missing title!",js = [],css = [],&block)
+	css << '/main.css'
   js  << '/reposition.js'
   js.insert(0,"https://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
 	pagename += " - Storybouncer"
@@ -31,7 +28,7 @@ def template(pagename="Missing title!",js = [],css = [],&block)
       h.div(:id => 'topbar') do
 				h.img(:id => "toplogo",:src => '/smalllogo.gif')
 				h.span(:id => 'stateinfo') do
-					if session[:logged]
+					if false#session[:logged]
 						h << "#{session[:user]} | "
 						h.a(:href => '/usercp.fgh', :id => 'managelink'){"UserCP"}
 						h << " | "

@@ -11,14 +11,15 @@ class HTMLMaker
 		
 		attributes = []
 		raw_attr.each do |key,val|
-			attr = String.try_convert(val)
+			val = attr = String.try_convert(val) || val.to_s
 			raise InvalidAttribute,"was not able to convert #{val} to string" if attr.nil?
 			attributes << "#{key}=\"#{CGI::escapeHTML(val)}\""
 		end
 		
 		if block_given?
 			@currentHTML += "<#{method_name.to_s}#{attributes.empty? ? "" : " "+attributes.join(" ")}>\n"
-			add = String.try_convert(yield self)
+      res = (yield self)
+			add = String.try_convert(res) || res.to_s
 			@currentHTML += add unless add.nil?
 			@currentHTML += "</#{method_name.to_s}>\n"
 		else

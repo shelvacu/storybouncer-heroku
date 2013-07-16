@@ -6,6 +6,7 @@ require 'pony'
 require 'pp'
 require 'yaml'
 require 'cgi' #SOOO MANY LIBRARIEZZZZZ!
+require 'json'
 
 if DB.tables.empty? #database has not been generated, it needs to be
   require './reset_tables.rb'
@@ -41,6 +42,7 @@ else
 end 
 $site_name = "www.storybouncer.com" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)
+  return true unless ENV['TESTING_ENV'].nil?
 	return true unless email.match(/^\w*@\w*\.\w{2,5}(\.\w{2,5})?$/).nil?
 	return false
 end
@@ -49,38 +51,12 @@ def valid_username?(name)
 	return false
 end
 
-
-
-#SESSI
-=begin
-before do
-  if !(id = session[:sessid]).nil?
-    if DB[:sessi].where(:id => id).update(:usetime => Time.now) == 0
-      session[:sessid] = nil
-      sessi[:dead] = true
-    else
-      sessi[:dead] = false
-      req = DB[:sessi].where(:id => id)
-      sessi = JSON.parse(req.all[:data]).merge(sessi)
-    end
-  else
-    sessi[:dead] = true
-  end
-end
-
-after do
-  if !session[:sessid].nil?
-    while DB[:sessi].where(:id => session[:sessid],:lock => false).update(:lock => true) == 0
-      #is locked OR sessi doesn't exist
-      DB[:sessi].where(:id => session[
-      sleep(0.1)
-    
-##### !FINISHED
-=end
 error do
 	err = env['sinatra.error']
-	Pony.mail(	:from => "error@storybouncer.com",:to => "shelvacu@gmail.com", :subject => err.class.to_s,
-				:body => "Current session:#{session.pretty_inspect}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" )
+	Pony.mail(:from => "error@storybouncer.com",
+            :to => "shelvacu@gmail.com", 
+            :subject => err.class.to_s,
+            :body => "Current session:#{session.pretty_inspect}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" ) if not ENV['TESTING_ENV'].nil?
 	template("Error") do |h|
 		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
 	end
@@ -115,7 +91,7 @@ get '/' do
 }"}	
 		}
 		$h.body("style" => 'text-align:center') do
-      $h.div() do
+      $h.div do
         $h.img(:src => '/logo.gif')
         # $h.h1(:id => 'awesome'){"Currently in development"}
         #if win
@@ -212,7 +188,7 @@ post '/register.fgh' do
 				end
 				Pony.mail(	:from => "no-reply@storybouncer.com",:to => params[:email],
 							:subject => "your new account!", :html_body => e.to_s, 
-							:body => "Please copy+paste this url into your browser: #{verify_link}\n\nOr, go to #{$site_name}/verify.fgh and enter the code #{email_verify_key.inspect}")
+							:body => "Please copy+paste this url into your browser: #{verify_link}\n\nOr, go to #{$site_name}/verify.fgh and enter the code #{email_verify_key.inspect}") if ENV["TESTING_ENV"].nil?
 				h.h2{"Success :D"}
 				h.h5{"Please close this window, then check your email: #{params[:email]}"}
 			else
@@ -299,10 +275,11 @@ post '/login.fgh' do
 		end
 	elsif DB[:users].where(:user => params[:user]).empty?
 		ret = template('Username Incorrect'){|h| h.h2{"Username incorrect"}}
-	elsif DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]) ).empty?
+	elsif DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]) ).empty? && false
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
-		userdata = DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]) ).all[0]
+		userdata = DB[:users].where(:user => params[:user] ).all[0]
+    #,:pass => Digest::SHA256.hexdigest(params[:pass])
 		session[:logged] = true
 		session[:user] = userdata[:user]
 		session[:userid] = userdata[:id]
@@ -407,29 +384,39 @@ end
 get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 	log = ""
 	#return "nup, no id" if params[:id].nil?
-  error 404 if params[:id].nil?
+  redirect to('/booklist.fgh') if params[:id].nil?
 	params[:id] = params[:id].to_i
 	
-	return "book does not exist" if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
+	#return "book does not exist" if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
+  begin
+    book = Book.new(params[:id])
+  rescue ItemDoesntExist
+    error 404
+  end
   chap_num = (params[:chap] || 1).to_i
-	book = DB[:books].first(:id => params[:id])
-  chaps = getarray(book[:chaps])
-  chap_id = chaps.order_by(:val).limit(1,chap_num-1).all[0][:val]
-  chap = DB[:chaps].where(:id => chap_id).all.first
-  name = (chap.nil? ? "Chapter not here(yet)" : chap[:name])
+	#book = DB[:books].first(:id => params[:id])
+  #chaps = getarray(book[:chaps])
+  #chap_id = chaps.order_by(:val).limit(1,chap_num-1).all[0][:val]
+  chap = book.chaps[chap_num - 1] #DB[:chaps].where(:id => chap_id).all.first
+  error 404 if chap.nil?
+  name = chap.strname
   name = CGI.escapeHTML(name)
-  paras= (chap.nil? ? [{:id => -1, :auth => 1, :an => "", :text => "This chapter does not exist(it might later), sorry!"}] : getarray(chap[:paras]).order(:id).all.map{|o| DB[:paras].first(:id => o[:val]) })
-  pparas=(chap.nil? ? [] : getarray(book[:pparas]).order{random{}}.all)
-  fin  = (book[:fin] == 't')
-	template("#{name}") do |h|
+  paras= chap.paras.all
+
+  last_chapter = chap_num >= book.chaps.count-1
+  pparas = book.pparas.all_order_rand# if last_chapter
+  fin  = book.fin?
+  
+  
+
+	template("#{book.strname}",'/vote.js') do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
 				if chap_num > 1
-					#h.div(:class => 'prevContainer') do
-					['top','bottom'].each { |s|
-						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap.nil? ? 1 : (chap_num - 1)}",:id => "#{s}PrevButton"){"Prev"}
-					}
-					#end
+					['top','bottom'].each do |s|
+						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{(chap_num - 1)}",:id => "#{s}PrevButton"){"Prev"}
+					end
+          nil
 				else
 					h.div(:class => 'spacefiller'){}
 				end
@@ -439,56 +426,180 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
 					h.h2(:id => 'storyname'){name}
 					h.br
 					paras.each do |para|
-						h.p(:class => 'paratext'){CGI.escapeHTML(para[:text]).gsub("\n","<br/>")}
+						h.p(:class => 'paratext') do
+              CGI.escapeHTML(para.text).gsub("\n","<br/>")
+            end
 						h.br
 					end
-          h << pparas.pretty_inspect
-          if !fin
+          #h << pparas.pretty_inspect
+          h.hr
+          if !fin && last_chapter
+            if session[:logged]
+              user = User.new(session[:userid])
+            end
             pparas.each do |para|
-              h.div(:class => 'pparaContainer') do
-                h.p(:class => 'pparaText'){"#{para[:text]}"}
+              count = para.vote_count
+              #if count > 0
+              #  color = "#0f0" #green
+              #else
+              #end 
+              h.div(class:'pparaContainer',id:"ppara#{para.id}") do
+                h.p(:class => 'pparaText') do
+                  CGI.escapeHTML(para.text).gsub("\n","<br />")
+                end
                 h.br
-                h.span(:class => 'pparaAuthor'){h.span{"-A person"}}
+                h.div(:class => 'pparaFooter') do 
+                  h.span(:class => 'pparaVote') do
+                    size = 25
+                    h.img(:src => '/upvote.png',
+                          :width  => size,
+                          :height => size,
+                          :class => 'voteImage upVote'+(!user.nil? && para.upvotes.include?(user) ? " votedImage" : ''),
+                          :onclick => "vote(#{para.id},true,this)")
+                    h.img(:src => '/downvote.png',
+                          :width  => size,
+                          :height => size,
+                          :class => 'voteImage downVote'+(!user.nil? && para.downvotes.include?(user) ? " votedImage" : ''),
+                          :onclick => "vote(#{para.id},false,this)")
+                  end
+                  h.div(:class => "voteCount " +
+                  (count>0 ? "votePositive" : "voteNegative")) do
+                    count.to_s
+                  end
+                  h.div(:class => 'pparaAuthorContainer') do
+                    h << "by "
+                    h.span(:class => 'pparaAuthor') do 
+                      CGI.escapeHTML(para.author.name)
+                    end
+                  end
+                end
               end
             end
             
             h.div(:class => 'addsuggested') do
-              h.h5{"Suggest a continuation!"}
-              h << "uhh.... to be added. Eventually."
+              if not session[:logged]
+                h.h5{"Please login to suggest a new paragraph"}
+              else
+                h.form(:id => 'addParaForm',
+                       :action => '/submitPara',
+                       :method => 'post') do
+                  h.h5{"Suggest your own paragraph!"}
+                  h.textarea(:name => 'mainText',
+                             :class => 'submitParaText'){}
+                  h.input(:type => 'submit',
+                          :name => 'submit',
+                          :value => 'Submit!',
+                          :class => 'submitParaSubmit')
+                  h.input(:type => "hidden",
+                          :name => "bookID",
+                          :value =>"#{params[:id]}")
+                  h.input(:type => "hidden",
+                          :name => "chapID",
+                          :value =>"#{chap_num}")
+                end
+              end
             end
           end
 				end
 			end
 			h.td(:class => 'nextContainer') do
-				if chap_num < chaps.count
+				if chap_num < book.chaps.count
 					#h.div(:class => 'nextContainer') do
 					['top','bottom'].each { |s|
 						h.a(:href => "/view/book.fgh?id=#{params[:id]}&chap=#{chap_num + 1}",:id => "#{s}NextButton"){"Next"}
 					}
+          nil
 					#end
 				else
 					h.div(:class => 'spacefiller'){}
 				end
 			end
 		end
-	end
+	end  
 end
+
+post '/submitPara' do
+  if not session[:logged]
+    return "Error: not logged in"
+  elsif params[:bookID].nil? || params[:mainText].nil?
+    return "Error: not enough params"
+  end
+    user = User.new(session[:userid])
+    begin
+      book = Book.new(params[:bookID])
+    rescue ItemDoesntExist
+      return "Error: Book doesn't exist"
+    end
+    return "Error: Book is finished" if book.fin?
+    new_para = Para.create(:auth => user,
+                           :an => "",
+                           :text => params[:mainText],
+                           :upvotes => makearray,
+                           :downvotes => makearray)
+    book.pparas << new_para
+    params[:chapID] ||= 1
+    params[:chapID] = params[:chapID].to_i
+    redirect to("/view/book.fgh?id=#{params[:bookID]}&chap=#{params[:chapID]}")
+end
+    
+
+get '/vote' do
+  res = {status:"error"}
+  return JSON(res) if params[:dir].nil? || params[:id].nil?
+  direction = (params[:dir]=='1')
+  if !session[:logged]
+    res[:error] = 0 #not logged in
+    return JSON(res)
+  end
+  para_id = params[:id].to_i
+  begin
+    para = Para.new(para_id)
+  rescue ItemDoesntExist
+    res[:error] = 1 #doesnt exist
+  end
+  user = User.new(session[:userid])
+  #vote = para.re_vote(user,direction)
+  para.upvotes.delete(user)
+  para.downvotes.delete(user)
+  if direction
+    para.upvotes << user
+    vote = true
+  else
+    para.downvotes << user
+    vote = false
+  end
+  res[:status] = "success"
+  res[:vote] = !!vote
+  res[:id] = para_id
+  res[:votes] = para.vote_count
+  return JSON(res)
+end
+  
+  
 
 get '/booklist.fgh' do 
   template('ALL the books!') do |h|
     h.div(:class => 'booklist') do
-      DB[:books].all.each do |book|
+      # DB[:books].all.each do |book|
+      #   h.span(:class => 'booklisting') do
+      #     nameid = book[:name]
+      #     namething = DB[:names].first(:id => nameid)
+      #     name = namething[:name]
+      #     h.a(:href => "/view/book.fgh?id=#{book[:id]}"){name}
+      #   end
+      #   h.br
+      # end
+      Book.all.each do |book|
         h.span(:class => 'booklisting') do
-          nameid = book[:name]
-          namething = DB[:names].first(:id => nameid)
-          name = namething[:name]
-          h.a(:href => "/view/book.fgh?id=#{book[:id]}"){name}
+          h.a(:href => "/view/book.fgh?id=#{book.id}"){book.namestr}
         end
         h.br
       end
+      nil
     end
   end
 end
+  
 =begin
 get "/routes.txt" do
 	content_type 'plain/text'
@@ -500,6 +611,7 @@ get "/routes.txt" do
 	#end
 end
 =end
+  
 get "/routes.fgh" do
 	routes = Sinatra::Application.routes
 	pages = Hash.new{|j,k| j[k]=[]} #"blarg.fgh" => ["GET","POST"]
@@ -532,6 +644,7 @@ get "/routes.fgh" do
 		end
 	end
 end
+  
 get '/plain-ip.fgh' do
   "#{request.ip}"
 end
@@ -550,3 +663,4 @@ end
 #get '/except.fgh' do
 #	this_is_not_a_real_method_and_will_raise_an_error
 #end
+  
