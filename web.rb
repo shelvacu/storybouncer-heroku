@@ -436,7 +436,11 @@ get '/view/book.fgh' do #/view/book.fgh?id=blabla&chap=1
           h.hr
           if !fin && last_chapter
             if session[:logged]
-              user = User.new(session[:userid])
+              begin
+                user = User.new(session[:userid])
+              rescue ItemDoesntExist
+                redirect to("/login.fgh")
+              end
             end
             pparas.each do |para|
               count = para.vote_count
