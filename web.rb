@@ -84,7 +84,7 @@ get '/' do
 	$h.html do
 		$h.head{
 			$h.title{"Storybouncer!"}
-      # $h << "<meta charset=\"UTF-8\">"
+      $h << "<meta charset=\"UTF-8\">"
 			$h.style{"img{margin:0px auto}
 .desc{
 		width:400px;
