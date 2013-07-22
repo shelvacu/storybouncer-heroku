@@ -33,13 +33,21 @@ def template(pagename="Missing title!",js = [],css = [],&block)
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
 						h << "#{session[:user]} | "
-						h.a(:href => '/usercp.fgh', :id => 'managelink'){"UserCP"}
+						h.a(:href => '/usercp.fgh', 
+                :id => 'managelink',
+                :class => 'blacklink'){"UserCP"}
 						h << " | "
-						h.a(:href => '/logout.fgh', :id => 'logoutlink'){"Logout"}
+						h.a(:href => '/logout.fgh', 
+                :id => 'logoutlink',
+                :class => 'blacklink'){"Logout"}
 					else
-						h.a(:href => '/login.fgh', :id => 'managelink'){"Login"}
+						h.a(:href => '/login.fgh', 
+                :id => 'managelink',
+                :class => 'blacklink'){"Login"}
             h << " | "
-            h.a(:href => '/register.fgh', :id => 'regsiterlink'){"Register"}
+            h.a(:href => '/register.fgh', 
+                :id => 'regsiterlink',
+                :class => 'blacklink'){"Register"}
 					end
 				end
 			end
@@ -50,9 +58,11 @@ def template(pagename="Missing title!",js = [],css = [],&block)
 			}
 			h.div(:id => "bottombar") do
 				h.div(:id => "innerbottombar") do
-					h.span(:id => "copy"){"Created by and Copyright &copy; Shelvacu Vevevende"}
+					h.span(:id => "copy"){"Site design created by and Copyright &copy; Shelvacu Tebbs 2013"}
 					#h.span(:id => "donatelink") do
-					h.a(:id => "donatelink",:href => "/donate.fgh"){"Donate"}
+					h.a(:id => "donatelink",
+              :href => "/donate.fgh",
+              :class => 'blacklink'){"Donate"}
 					#end
 				end
 			end

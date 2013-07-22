@@ -22,8 +22,12 @@ body{
 body{
 		background-color:#B2B2FF;
 }
+#toplogo{
+		
+}
 #mainContainer{
 		text-align:center;
+		height:90%;
 }
 #main{
 		/*margin-left:20px;*/
@@ -42,6 +46,7 @@ body{
 		border:5px solid black;
 		border-radius:5px;
 }
+.blacklink:visited{color:#a1f}/*link on a black background*/
 #managelink:link{color:#3366FF;}
 #managelink:visited{color:#3366FF;}
 /*#stateinfo:hover {font-weight:bold}*/
@@ -61,6 +66,7 @@ body{
 		bottom:0px;
 }
 #innerbottombar{
+		overflow:visible;
 		margin-left:10px;
 		margin-right:10px;
 		position:relative;

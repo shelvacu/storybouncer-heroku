@@ -14,9 +14,11 @@ if DB.tables.empty? #database has not been generated, it needs to be
 end
 enable :sessions
 set :session_secret, "RAGEGAMINGVIDEOSpinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
-set :show_exceptions, false
+set :show_exceptions, development?
+set :sessions, :expire_after => 172800 #2 days
 
 if ENV['TESTING_ENV'].nil?
+  puts "ASSUMING ON PRODUCTION SERVER"
   Pony.options = {
     :via => :smtp,
     :via_options => {
@@ -30,12 +32,12 @@ if ENV['TESTING_ENV'].nil?
     }
   }
 else
-  require './smtp_serv'
+  puts "assuming dev server"
   Pony.options = {
     :via => :smtp,
     :via_options =>  {
       :address              => 'localhost',
-      :port                 => '12345',
+      :port                 => '1025',
     },
     :from => "iforgotoincludeafromaddressIapologize@storybouncer.com" 
   }
@@ -43,7 +45,7 @@ else
 end 
 $site_name = "www.storybouncer.com" #"protected-brushlands-7337.herokuapp.com"
 def valid_email?(email)
-  return true unless ENV['TESTING_ENV'].nil?
+  #return true unless ENV['TESTING_ENV'].nil?
 	return true unless email.match(/^\w*@\w*\.\w{2,5}(\.\w{2,5})?$/).nil?
 	return false
 end
@@ -54,13 +56,19 @@ end
 
 error do
 	err = env['sinatra.error']
-	Pony.mail(:from => "error@storybouncer.com",
-            :to => "shelvacu@gmail.com", 
-            :subject => err.class.to_s,
-            :body => "Current session:#{session.pretty_inspect}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" ) if not ENV['TESTING_ENV'].nil?
-	template("Error") do |h|
-		h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
-	end
+  begin
+    Pony.mail(:from => "error@storybouncer.com",
+              :to => "shelvacu@gmail.com", 
+              :subject => err.class.to_s,
+              :body => "Current session:#{session.pretty_inspect}\nM:#{err.message}\n\n\n#{err.backtrace.join("\n")}" )
+  rescue
+  end
+  begin
+    template("Error") do |h|
+      h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
+    end
+  rescue
+    "There's been a terrible error, please email me A.S.A.P. including the time you got the error:
 end
 error 404 do
 	template('Not Found') do |h|
@@ -670,7 +678,7 @@ end
 get '/ttdd/?' do
   redirect to("/ttdd/index.html")
 end
-#get '/except.fgh' do
-#	this_is_not_a_real_method_and_will_raise_an_error
-#end
+# get '/except.fgh' do
+# 	this_is_not_a_real_method_and_will_raise_an_error
+# end
   
