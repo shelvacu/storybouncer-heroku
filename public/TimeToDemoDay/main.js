@@ -3,7 +3,7 @@ function divmod(a,b){
 		return [((a-mod)/b),mod]
 }
 
-var demoDay = new Date(2013,7,23,12,0,0,0);
+var demoDay = new Date(2013,7,24,13,0,0,0);
 var now;
 var secondsBox = document.getElementById("secondshower");
 var timeBox = document.getElementById("timeshower");

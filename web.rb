@@ -80,6 +80,7 @@ get '/' do
   win = (rand(10)==0)
 	$h = HTMLMaker.new
   h = $h
+  $h << "<!DOCTYPE HTML>"
 	$h.html do
 		$h.head{
 			$h.title{"Storybouncer!"}
