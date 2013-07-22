@@ -84,6 +84,7 @@ get '/' do
 	$h.html do
 		$h.head{
 			$h.title{"Storybouncer!"}
+      $h << "<meta charset=\"UTF-8\">"
 			$h.style{"img{margin:0px auto}
 .desc{
 		width:400px;
@@ -94,7 +95,7 @@ get '/' do
 		}
 		$h.body("style" => 'text-align:center') do
       $h.div do
-        $h.img(:src => '/logo.gif')
+        $h.img(:src => '/logo.gif', :alt => "Storybouncer")
         # $h.h1(:id => 'awesome'){"Currently in development"}
         #if win
         #  $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
