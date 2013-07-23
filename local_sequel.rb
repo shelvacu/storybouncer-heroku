@@ -342,9 +342,11 @@ VotableItem = VoteableItem
 class Book < DBItem
   class << self
     def create(opts)
-      [:chaps,:pparas,:pnames].each{ |arr_name|
+      [:chaps,:pparas,:pnames,:subs].each{ |arr_name|
         opts[arr_name] ||= makearray
       }
+      
+      #req'd user,pass(md5),email, emailver
       super(*opts)
     end
   end

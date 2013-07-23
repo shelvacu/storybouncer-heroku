@@ -7,7 +7,5 @@ gem 'jdbc-postgres'
 gem 'sequel'
 gem 'pony'
 gem 'json-jruby'
-group :development do
-  gem 'jdbc-sqlite3'
-end
 gem 'rufus-scheduler'
+gem 'markdown_meta'

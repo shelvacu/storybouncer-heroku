@@ -7,11 +7,12 @@ def makehtml #(&block)
 	return h.to_s
 end
 #blarg
-def template(pagename="Missing title!",js = [],css = [],&block)
+def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
   js = [js] unless  js.is_a?(Array)
   css=[css] unless css.is_a?(Array)
-	css << '/reset.css'
+	css.insert(0,'/reset.css') unless markdown
   css << '/main.css'
+  css << '/markdown.css' if markdown
   js  << '/reposition.js'
   js.insert(0,"https://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
 	pagename += " - Storybouncer"
@@ -33,19 +34,19 @@ def template(pagename="Missing title!",js = [],css = [],&block)
 				h.span(:id => 'stateinfo') do
 					if session[:logged]
 						h << "#{session[:user]} | "
-						h.a(:href => '/usercp.fgh', 
+						h.a(:href => '/usercp', 
                 :id => 'managelink',
                 :class => 'blacklink'){"UserCP"}
 						h << " | "
-						h.a(:href => '/logout.fgh', 
+						h.a(:href => '/logout', 
                 :id => 'logoutlink',
                 :class => 'blacklink'){"Logout"}
 					else
-						h.a(:href => '/login.fgh', 
+						h.a(:href => '/login', 
                 :id => 'managelink',
                 :class => 'blacklink'){"Login"}
             h << " | "
-            h.a(:href => '/register.fgh', 
+            h.a(:href => '/register', 
                 :id => 'regsiterlink',
                 :class => 'blacklink'){"Register"}
 					end
@@ -61,7 +62,7 @@ def template(pagename="Missing title!",js = [],css = [],&block)
 					h.span(:id => "copy"){"Site design created by and Copyright &copy; Shelvacu Tebbs 2013"}
 					#h.span(:id => "donatelink") do
 					h.a(:id => "donatelink",
-              :href => "/donate.fgh",
+              :href => "/donate",
               :class => 'blacklink'){"Donate"}
 					#end
 				end

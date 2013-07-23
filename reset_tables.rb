@@ -33,11 +33,12 @@ DB.create_table! :users do
   String      :pass
   String      :email, :unique => true
   String      :emailver
-  TrueClass   :veri
+  TrueClass   :veri, :default => false
   Integer     :subs #arr
   Integer     :hist #arr
   Integer     :auth,:default => 0 # 0:user 1:mod 2:admin 3:owner 4+:invalid
   Time        :ban ,:default => Time.at(0) #d-fault 2 epoch
+  Integer     :subs #arr
 end
 
 DB.create_table! :names do
@@ -52,8 +53,8 @@ end
 DB.create_table! :array do
   primary_key :id
 end
-=begin
-DB.create_table! :sessi do
+
+DB.create_table? :sessi do
   primary_key :id
   Time :usetime
   Integer :userid
@@ -62,12 +63,12 @@ DB.create_table! :sessi do
   String :data
   TrueClass :lock
 end
-=end
+
 DB.tables.each do |table_name|
   DB.drop_table(table_name) if /array\d+/ === table_name
 end
 
-# DB.create_table! :notif do
-#   primary_key :id
-#   String :email
-# end
+DB.create_table? :notif do
+  primary_key :id
+  String :email
+end

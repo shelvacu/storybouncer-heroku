@@ -5,13 +5,16 @@ GEM
     eventmachine (1.0.3)
     eventmachine (1.0.3-java)
     jdbc-postgres (9.2.1002.1)
-    jdbc-sqlite3 (3.7.2.1)
+    json (1.5.0)
     json (1.5.0-java)
     json-jruby (1.5.0-java)
       json (= 1.5.0)
+    kramdown (1.1.0)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    markdown_meta (0.0.2)
+      kramdown
     mime-types (1.23)
     polyglot (0.3.3)
     pony (1.4.1)
@@ -46,8 +49,8 @@ PLATFORMS
 
 DEPENDENCIES
   jdbc-postgres
-  jdbc-sqlite3
   json-jruby
+  markdown_meta
   pony
   rufus-scheduler
   sequel

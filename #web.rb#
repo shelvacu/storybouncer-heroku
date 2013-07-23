@@ -96,6 +96,12 @@ before do
   if request.host == "storybouncer.com"
     redirect request.url.gsub("storybouncer.com","www.storybouncer.com"),301
   end
+  if request.path.end_with?('.fgh')
+    redirect "/fghError"
+  end
+end
+get "/fghError" do
+  "I have recently updated the urls to no longer use the fgh extension. If you came here by a link on the site, please notify me"
 end
 
 get '/' do
