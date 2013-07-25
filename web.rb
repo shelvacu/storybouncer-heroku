@@ -243,22 +243,23 @@ get '/colors' do
 end
 =end
 get '/donate/?' do
-	template("Donate!") do |h|
-		h.style{"li{margin:5px;}ul{width:400px}"}
-    #Money is cool. If you think I'm cool enough to have money then,well, that's cool.
-		h.h4(:style => 'width:300px;'){"You have two options for donating:"}
-		h.ul do
-			h.li do
-				h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
-				h << File.read('./SiteDonatebutton')
-			end
+  markdown :donate
+	# template("Donate!") do |h|
+	# 	h.style{"li{margin:5px;}ul{width:400px}"}
+  #   #Money is cool. If you think I'm cool enough to have money then,well, that's cool.
+	# 	h.h4(:style => 'width:300px;'){"You have two options for donating:"}
+	# 	h.ul do
+	# 		h.li do
+	# 			h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
+	# 			h << File.read('./SiteDonatebutton')
+	# 		end
 			
-			h.li do
-				h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
-				h << File.read('./Donatebutton')
-			end
-		end
-	end
+	# 		h.li do
+	# 			h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
+	# 			h << File.read('./Donatebutton')
+	# 		end
+	# 	end
+	# end
 end
 
 get '/login/?' do
@@ -432,8 +433,6 @@ get '/view/book/?' do #/view/book?id=blabla&chap=1
   last_chapter = chap_num >= book.chaps.count-1
   pparas = book.pparas.all_order_rand# if last_chapter
   fin  = book.fin?
-  
-  
 
 	template("#{book.strname}",'/vote.js') do |h|
 		h.singletablerow do

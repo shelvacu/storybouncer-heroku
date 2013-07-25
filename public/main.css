@@ -25,9 +25,18 @@ body{
 #toplogo{
 		
 }
+#notFooter{
+		height:100%;
+		height:auto !important;
+		min-height:100%;
+		margin-bottom:-37px;
+}
 #mainContainer{
 		text-align:center;
-		height:90%;
+		height:100%;
+}
+#push{
+		height:37px;
 }
 #main{
 		/*margin-left:20px;*/

@@ -1,6 +1,6 @@
 require './local_sequel'
 require 'yaml'
-# puts "THIS PROGRAM IS OBSELETE AND DOESN'T WORK!" 
+
 username = "Arthur Conan Doyle"
 dataset= DB[:users].where(:user => username)
 dataset.delete
@@ -18,13 +18,14 @@ chaps = YAML::load(File.read('sherlock.yaml'))
 chapsarr = makearray
 nameid = DB[:names].insert(:auth => userid, :name => name, :fin => true)
 bookid = DB[:books].insert(:auth => userid, 
-                  :chaps => chapsarr, 
-                  :endvotes => makearray,
-                  :noendvotes => makearray,
-                  :pparas => makearray,
-                  :fin => true,
-                  :pnames => makearray,
-                  :name => nameid)
+                           :chaps => chapsarr, 
+                           :endvotes => makearray,
+                           :noendvotes => makearray,
+                           :pparas => makearray,
+                           :fin => true,
+                           :pnames => makearray,
+                           :name => nameid,
+                           :subs => makearray)
 chapids = []
 chaps.each do |key,val|
   paraid = DB[:paras].insert(:auth => userid,:an =>"",:text => val.join("\n").gsub("\n\n","\r").gsub("\n"," ").gsub("\r","\n\n"),:upvotes => makearray, :downvotes => makearray)
