@@ -1,1 +1,5 @@
-irb -r 'local_sequel.rb'
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+	 source "$HOME/.rvm/scripts/rvm"
+fi
+
+irb -r 'local_sequel'

@@ -26,6 +26,7 @@ enable :sessions
 set :session_secret, "RAGEGAMINGVIDEOSpinkflufflyunicornsdancingonrainbowsgravyandtoastcaptainsparklestobuscuspewdiepie98impossiblethepianoguyslindseystirlingHISHE"
 set :show_exceptions, development?
 set :sessions, :expire_after => 172800 #2 days
+use Rack::Deflater
 
 if ENV['TESTING_ENV'].nil?
   puts "ASSUMING ON PRODUCTION SERVER"
@@ -96,18 +97,25 @@ before do
   if request.host == "storybouncer.com"
     redirect request.url.gsub("storybouncer.com","www.storybouncer.com"),301
   end
+  if session[:logged]
+    begin
+      user = User.new(session[:userid])
+    rescue ItemDoesntExist
+      session.clear
+    end
+  end
 end
 
 get '/' do
   win = (rand(10)==0)
-	$h = HTMLMaker.new
-  h = $h
-  $h << "<!DOCTYPE HTML>"
-	$h.html do
-		$h.head{
-			$h.title{"Storybouncer!"}
-      $h << "<meta charset=\"UTF-8\">"
-			$h.style{"img{margin:0px auto}
+	h = HTMLMaker.new
+  #h = h
+  h << "<!DOCTYPE HTML>"
+	h.html do
+		h.head{
+			h.title{"Storybouncer!"}
+      h << "<meta charset=\"UTF-8\">"
+			h.style{"img{margin:0px auto}
 .desc{
 		width:400px;
 		margin-right:auto;
@@ -115,27 +123,21 @@ get '/' do
 		font-family:sans-serif;
 }"}	
 		}
-		$h.body("style" => 'text-align:center') do
-      $h.div do
-        $h.img(:src => '/logo.gif', :alt => "Storybouncer")
+		h.body("style" => 'text-align:center') do
+      h.div do
+        h.img(:src => '/logo.gif', :alt => "Storybouncer")
         # $h.h1(:id => 'awesome'){"Currently in development"}
         #if win
         #  $h.h1(:style => "font-size:big;"){"It's your lucky day!"}
         #end
       end
-      $h.h1{"Writing. Crowdsourced."}
-      $h.p(:class => "desc"){"How it works:"}
-      $h.p(:class => "desc"){"Someone makes a \"book\" consisting of a title, and a single paragraph. Everyone reads this, and following the same idea of the story someone writes another paragraph, a suggested paragraph. And another person. And another. Then, all the suggested paragraphs are voted on by the community, and the one with the most votes is selected to be part of the story. The process then repeats, and a story is born."}
-      $h.h3{"Currently being developed, sorry"}
-      $h.div do
-        $h.h3{"Would you like to know when it's done? Sign-up here!"}
-        $h.form(:method => "post") do
-          $h.span{h << "Email:";h.input(:type => 'text',:name => 'email');h.input(:type => 'submit',:value => 'submit')}
-        end
-      end
+      h.h1{"Writing. Crowdsourced."}
+      h.p(:class => "desc"){"How it works:"}
+      h.p(:class => "desc"){"Someone makes a \"book\" consisting of a title, and a single paragraph. Everyone reads this, and following the same idea of the story someone writes another paragraph, a suggested paragraph. And another person. And another. Then, all the suggested paragraphs are voted on by the community, and the one with the most votes is selected to be part of the story. The process then repeats, and a story is born."}
+      h.a(href:'/booklist'){h.h3{"Click here to get started!"}}
 		end
 	end
-	$h.to_s
+	h.to_s
 end
 
 post '/' do
@@ -200,7 +202,13 @@ post '/register/?' do
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
-				DB[:users].insert(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]), :email => params[:email], :emailver => email_verify_key,:subs => makearray, :hist => makearray,:auth => 0)
+				DB[:users].insert(:user => params[:user],
+                          :pass => Digest::SHA256.hexdigest(params[:pass]), 
+                          :email => params[:email], 
+                          :emailver => email_verify_key,
+                          :subs => makearray, 
+                          :hist => makearray,
+                          :auth => 0)
 				session[:logged] = true
 				session[:user] = params[:user]
 				#email availible, all good!
@@ -448,7 +456,18 @@ get '/view/book/?' do #/view/book?id=blabla&chap=1
 			end
 			h.td do
 				h.div(:id => 'storybody') do
-					h.h2(:id => 'storyname'){name}
+          bar = Proc.new do
+            h.a(:class => 'subscribe',
+                :href => "/subscribe?bookid=#{params[:id]}&chap=#{chap_num}",
+                :style => "visibility:#{session[:logged] ? 'visible' : 'hidden'}") do
+              h.img(src:"/mail-image.png",
+                    height:15)
+              h << "Subscribe to this book!"
+            end
+            h.h3(:class => 'storyname'  ){CGI.escapeHTML(book.strname)}
+            h.h4(:class => 'chaptername'){name}
+          end
+          bar.call
 					h.br
 					paras.each do |para|
 						h.p(:class => 'paratext') do
@@ -529,6 +548,7 @@ get '/view/book/?' do #/view/book?id=blabla&chap=1
               end
             end
           end
+          bar.call
 				end
 			end
 			h.td(:class => 'nextContainer') do
@@ -570,6 +590,30 @@ post '/submitPara' do
     params[:chapID] = params[:chapID].to_i
     redirect to("/view/book?id=#{params[:bookID]}&chap=#{params[:chapID]}")
 end
+
+get '/subscribe' do 
+  json = !params[:json].nil?
+  if !session[:logged]
+    return "{error:1}" if json #not logged in
+    return "You're not logged in! Please use the back button and then sign in or sign up"
+  elsif params[:bookid].nil? #or params[:chap].nil?
+    return "{error:2}" if json #somethings terribly wrong
+    return "There's something quite wrong here, most likely a broken link. Please notify me"
+  else
+    id = params[:bookid].to_i
+    begin
+      book = Book.new(id)
+    rescue ItemDoesntExist
+      return "{error:3}" if json
+      return "That book doesn't exist#{id > 0 ? ' yet' : ''}!"
+    end
+    user = User.new(session[:userid])
+    user.subs << book unless user.subs.include?(book)
+    return "{error:'none'}" if json
+    redirect to "/view/book?id=#{id}#{params[:chap].nil? ? '' : '&chap='+params[:chap]}"
+  end
+end
+    
     
 
 get '/vote' do
@@ -620,7 +664,10 @@ get '/booklist' do
       # end
       Book.all.each do |book|
         h.span(:class => 'booklisting') do
-          h.a(:href => "/view/book?id=#{book.id}"){book.namestr}
+          h.a(:href => "/view/book?id=#{book.id}",
+              :class => "booklink"){
+            book.namestr
+          }
         end
         h.br
       end
@@ -695,6 +742,23 @@ get '/db/dump.yaml' do
   tables = DB.tables
   hash_db = Hash[ tables.zip( tables.map{|t| DB[t].all} ) ]
   hash_db.to_yaml
+end
+get '/trippy/?' do
+  makehtml do |h|
+    h.head do 
+      h.title{"OMG"}
+      css = ['reset.css','omg.css']
+      css.each do |name|
+				h.link(:href => name,:rel => "stylesheet",:type => "text/css")
+			end
+      nil
+    end
+    
+    h.body do
+      h.div(id:"omg1"){}
+      h.div(id:"omg2"){}
+    end
+  end
 end
 
 #TIME TO DEMO DAY

@@ -134,15 +134,16 @@ table{overflow:visible;}
 		margin-bottom:25px;
 		line-height:30px;
 }
-#storyname{
-		text-align:center;
+.storyname{
+		float:right;
 }
 .paratext{
 		text-align:left;
 }
 
 .pparaText{
-		margin-left:5px;
+		margin-left:12px;
+		margin-top:5px;
 }
 .pparaContainer{
 		border:3px solid black;
@@ -182,7 +183,9 @@ table{overflow:visible;}
 /*.voteImage:active{
 		background-color:#000;
 }*/
-.addsuggested{}
+.addsuggested{
+		margin-bottom:26px;
+}
 .addParaForm{}
 .submitParaText{
 		width:99%;
@@ -216,6 +219,21 @@ table{overflow:visible;}
 		color:#888;
 		font-size:large;
 		margin-right:5px;
+}
+.subscribe{
+		float:left;
+		text-decoration:none;
+		border:2px solid darkblue;
+		padding-left:4px;
+		padding-right:4px;
+		color:black;
+		background-color:#fff;
+}
+.subscribe:hover{
+		background-color:#f8f8f8;
+}
+.subscribe:active{
+		background-color:#ccc;
 }
 /* usercp.fgh */
 .left,

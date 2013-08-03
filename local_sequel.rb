@@ -212,11 +212,11 @@ class DBArray
   end
   
   def [](index,order_by = :id)
-    ret = @set.order_by(:id).limit(1,index).first[:val]
+    ret = @set.order_by(:id).limit(1,index).first
     if ret.nil?
       return nil
     else
-      return @type.new ret
+      return @type.new ret[:val]
     end
   end
   
@@ -327,7 +327,7 @@ class Chap < DBItem
   end
   @tablename = :chaps
   
-  attr_accessor :name
+  column_accessor :name
   #def_array(:pnames,Name) #Eventual-e!
   def_array(:paras,Para)
   def namestr

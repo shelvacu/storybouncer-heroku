@@ -3,26 +3,29 @@
 **0.75: SQL DBackup(server-side)
 **0.875: get jruby to work!
 **1: Better session managment, on sql database. NEVERMIND JUST WAIT FOR STACK OVERFLOW
-1.5: View suggested paragraphs
-2: Add "Add paragraph"
-3: Allow voting:
-4: Test viewing of many paras
+**1.5: View suggested paragraphs
+**2: Add "Add paragraph"
+**3: Allow voting:
+FUCKTHIS4: Test viewing of many paras
+4.5: SUBSCRIPTIONS
 5: Get it to finish when certain number of people vote
-5.5: add tags
+6: Credit author under every para
+#5.5: add tags
 6: Book creation
-7: Book ending
-8: Book nameing
+#7: Book ending
+#8: Book nameing
 9: Password reset/known pass
 10:Password reset/unknown (by email)
 10.5: Display recent books on front page
 11:Fully setup SQL backups
-11.5: make sure sessions are stored server-side
+#11.5: make sure sessions are stored server-side
 11.75:prettyfy
 11.875: make sure it works on all browsers
 11.8375:non-js warning
 --------------------------------
 12: Release Alpha
 --------------------------------
+12.5: all the #'s
 13: Add edit suggestions
 14: Determine percentage a single author contributed.
 15: Add ads

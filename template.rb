@@ -15,6 +15,9 @@ def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
   css << '/markdown.css' if markdown
   #js  << '/reposition.js'
   js.insert(0,"https://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
+  js << "http://konami-js.googlecode.com/svn/trunk/konami.js"
+  js << "/soundmanager/script/soundmanager2-nodebug-jsmin.js" 
+  js << "/konami.js"
 	pagename += " - Storybouncer"
   return makehtml do |h|
 		h.head do
