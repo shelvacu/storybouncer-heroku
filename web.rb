@@ -28,7 +28,7 @@ set :show_exceptions, development?
 set :sessions, :expire_after => 172800 #2 days
 use Rack::Deflater
 
-if ENV['TESTING_ENV'].nil?
+if not development?
   puts "ASSUMING ON PRODUCTION SERVER"
   Pony.options = {
     :via => :smtp,
@@ -40,7 +40,8 @@ if ENV['TESTING_ENV'].nil?
       :password => ENV['SENDGRID_PASSWORD'],
       :authentication => :plain,
       :enable_starttls_auto => true
-    }
+    },
+    :from => "admin@storybouncer.com"
   }
 else
   puts "assuming dev server"
@@ -50,9 +51,10 @@ else
       :address              => 'localhost',
       :port                 => '1025',
     },
-    :from => "iforgotoincludeafromaddressIapologize@storybouncer.com" 
+    :from => "admin@storybouncer.com" 
   }
   require 'sinatra/reloader'
+  also_reload './template.rb'
 end 
 
 $site_name = "www.storybouncer.com"
@@ -80,8 +82,8 @@ error do
     template("Error") do |h|
       h.h3{"I'm sorry. There was an error. I have already been notified, so there's no need to email me. Thank you"}
     end
-  rescue
-    "There's been a terrible error, please email me A.S.A.P. including the time you got the error: info@storybouncer.com"
+  rescue Exception => e
+    "There's been a terrible error, please email me A.S.A.P. including the info below: info@storybouncer.com\nError info:\n#{e.message}\n\n#{e.backtrace}"
   end
 end
 error 404 do
@@ -187,17 +189,17 @@ get '/register/?' do
 		end
 	end
 end
-get  /\/invalid\/(.*)\/(.*)\/?/ do |type,value|
-	template("Invalid #{type}") do |h|
-		h.h1{"\"#{value}\" is invalid. Please go back and try again"}
-	end
-end
+#get  /\/invalid\/(.*)\/(.*)\/?/ do |type,value|
+#	template("Invalid #{type}") do |h|
+#		h.h1{"\"#{value}\" is invalid. Please go back and try again"}
+#	end
+#end
 post '/register/?' do
 	#make sure all parameters are there
 	template('Registering') do |h|
 		unless params[:user].nil? || params[:email].nil? || params[:pass].nil?
-			redirect "/invalid/username/#{params[:user]}" unless valid_username?(params[:user])
-			redirect "/invalid/email/#{params[:email]}" unless valid_email?(params[:email])
+      next "Invalid username '#{CGI.escapeHTML(params[:user])}'" unless valid_username?(params[:user])
+      next "Invalid email '#{CGI.escapeHTML(params[:email])}'" unless valid_email?(params[:email])
 			if DB[:users].where(:user => params[:user]).empty? && DB[:users].where(:email => params[:email]).empty?
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
@@ -216,12 +218,16 @@ post '/register/?' do
 				e = HTMLMaker.new
 				e.body do
 					e.span{"Please visit:"}
-					e.a(:href => verify_link){"Here"}
+					e.a(:href => verify_link){"Here: #{verify_link}"}
 					e.span{"To verify your account. <br />Alternatively, use the key \"#{email_verify_key}\" at #{$site_name}/verify"}
 				end
-				Pony.mail(	:from => "no-reply@storybouncer.com",:to => params[:email],
-							:subject => "your new account!", :html_body => e.to_s, 
-							:body => "Please copy+paste this url into your browser: #{verify_link}\n\nOr, go to #{$site_name}/verify and enter the code #{email_verify_key.inspect}") if ENV["TESTING_ENV"].nil?
+				Pony.mail(:from => "no-reply@storybouncer.com",
+                  :to => params[:email],
+                  :subject => "Your new storybouncer account!", 
+                  :html_body => e.to_s, 
+                  :body => "Please copy+paste this url into your browser: \
+#{verify_link}\n\nOr, go to #{$site_name}/verify and enter the code \
+#{email_verify_key.inspect}") unless development?
 				h.h2{"Success :D"}
 				h.h5{"Please close this window, then check your email: #{params[:email]}"}
 			else
@@ -233,41 +239,39 @@ post '/register/?' do
 				end
 			end
 		else
-			h.h2{"You seem to have submitted the form incorrectly. Please refresh and try again."}
+			h.h2{"You seem to have submitted the form incorrectly. Please refresh and try again, or get a different browser. If nothing works, my site is probably broken; please email me: theGuy@storybouncer.com"}
 		end
 	end
 end
-=begin
+
 get '/colors' do
 	template('C0L0RZ!') do |h|
+    h.style{<<EEND
+#main{
+background: #e5e5e5; /* Old browsers */
+background: -moz-linear-gradient(top,  #e5e5e5 0%, #000000 99%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e5e5e5), color-stop(99%,#000000)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #e5e5e5 0%,#000000 99%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #e5e5e5 0%,#000000 99%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #e5e5e5 0%,#000000 99%); /* IE10+ */
+background: linear-gradient(to bottom,  #e5e5e5 0%,#000000 99%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e5e5e5', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+}
+EEND
+    }
 		'0369cf'.split('').each do |a|
 			'0369cf'.split('').each do |b|
 				'0369cf'.split('').each do |c|
-					h.div(:style => 'background-color:#{a}#{b}#{c}'){a+b+c}
+					h.div(:style => "background-color:##{a}#{b}#{c};width:100px;font-family:monospace;"){"#"+a+b+c}
 				end
 			end
 		end
+    nil
 	end
 end
-=end
+
 get '/donate/?' do
   markdown :donate
-	# template("Donate!") do |h|
-	# 	h.style{"li{margin:5px;}ul{width:400px}"}
-  #   #Money is cool. If you think I'm cool enough to have money then,well, that's cool.
-	# 	h.h4(:style => 'width:300px;'){"You have two options for donating:"}
-	# 	h.ul do
-	# 		h.li do
-	# 			h << "Donate to the server: Funds from here will go directly into keeping the site hosted and fast."
-	# 			h << File.read('./SiteDonatebutton')
-	# 		end
-			
-	# 		h.li do
-	# 			h << "Or, donate directly to me. This will go to things like the server(if needed) and caffeine to stay awake working on the site"
-	# 			h << File.read('./Donatebutton')
-	# 		end
-	# 	end
-	# end
 end
 
 get '/login/?' do
@@ -415,39 +419,51 @@ get '/verify/?' do
 	end
 end
 
-#=begin
-get '/view/book/?' do #/view/book?id=blabla&chap=1
-	log = ""
-	#return "nup, no id" if params[:id].nil?
+get '/view/book/?' do
+  red = URI('/book')
+  red.query = URI.encode_www_form(params)
+  redirect to(red.to_s)
+end
+
+get '/book/?' do 
   redirect to('/booklist') if params[:id].nil?
 	params[:id] = params[:id].to_i
-	
-	#return "book does not exist" if DB[:books].where(:id => params[:id]).empty? # I should change both of these later, make a more useful message.
+  params[:chap] ||= 1
+  params[:chap] = params[:chap].to_i
+  redirect to("/book/#{params[:id]}/#{params[:chap]}")
+end
+
+get '/book/*/*/?' do |book_id,chap_id| #/view/book?id=blabla&chap=1
+	log = ""
+  book_id = book_id.to_i
+  chap_id = chap_id.to_i
+  chap_num = chap_id
+  
   begin
-    book = Book.new(params[:id])
+    book = Book.new(book_id)
   rescue ItemDoesntExist
     error 404
   end
-  chap_num = (params[:chap] || 1).to_i
 	#book = DB[:books].first(:id => params[:id])
   #chaps = getarray(book[:chaps])
   #chap_id = chaps.order_by(:val).limit(1,chap_num-1).all[0][:val]
-  chap = book.chaps[chap_num - 1] #DB[:chaps].where(:id => chap_id).all.first
+  chap = book.chaps[chap_id - 1] #DB[:chaps].where(:id => chap_id).all.first
   error 404 if chap.nil?
   name = chap.strname
   name = CGI.escapeHTML(name)
+  book_name = CGI.escapeHTML(book.strname)
   paras= chap.paras.all
 
   last_chapter = chap_num >= book.chaps.count-1
   pparas = book.pparas.all_order_rand# if last_chapter
   fin  = book.fin?
 
-	template("#{book.strname}",'/vote.js') do |h|
+	template("#{book_name}",'/vote.js') do |h|
 		h.singletablerow do
 			h.td(:class => 'prevContainer') do
 				if chap_num > 1
 					['top','bottom'].each do |s|
-						h.a(:href => "/view/book?id=#{params[:id]}&chap=#{(chap_num - 1)}",:id => "#{s}PrevButton"){"Prev"}
+						h.a(:href => "/book/#{book_id}/#{(chap_num - 1)}",:id => "#{s}PrevButton"){"Prev"}
 					end
           nil
 				else
@@ -456,16 +472,18 @@ get '/view/book/?' do #/view/book?id=blabla&chap=1
 			end
 			h.td do
 				h.div(:id => 'storybody') do
-          bar = Proc.new do
-            h.a(:class => 'subscribe',
-                :href => "/subscribe?bookid=#{params[:id]}&chap=#{chap_num}",
-                :style => "visibility:#{session[:logged] ? 'visible' : 'hidden'}") do
-              h.img(src:"/mail-image.png",
-                    height:15)
-              h << "Subscribe to this book!"
+          bar = Proc.new do #no, not as in foobar, as in the bar at the top of the page
+            h.div(class: 'storybar') do
+              h.a(:class => 'subscribe',
+                  :href => "/subscribe?bookid=#{params[:id]}&chap=#{chap_num}",
+                  :style => "visibility:#{session[:logged] ? 'visible' : 'hidden'}") do
+                h.img(src:"/mail-image.png",
+                      height:15)
+                h << "Subscribe to this book!"
+              end
+              h.h3(:class => 'storyname'  ){CGI.escapeHTML(book_name)}
+              h.h4(:class => 'chaptername'){name}
             end
-            h.h3(:class => 'storyname'  ){CGI.escapeHTML(book.strname)}
-            h.h4(:class => 'chaptername'){name}
           end
           bar.call
 					h.br
@@ -555,7 +573,7 @@ get '/view/book/?' do #/view/book?id=blabla&chap=1
 				if chap_num < book.chaps.count
 					#h.div(:class => 'nextContainer') do
 					['top','bottom'].each { |s|
-						h.a(:href => "/view/book?id=#{params[:id]}&chap=#{chap_num + 1}",:id => "#{s}NextButton"){"Next"}
+						h.a(:href => "/book/#{book_id}/#{chap_num + 1}",:id => "#{s}NextButton"){"Next"}
 					}
           nil
 					#end
@@ -565,6 +583,10 @@ get '/view/book/?' do #/view/book?id=blabla&chap=1
 			end
 		end
 	end  
+end
+
+get '/book/*/?' do |book_id|
+  redirect to("/book/#{book_id.to_i}/1")
 end
 
 post '/submitPara' do
@@ -652,24 +674,21 @@ end
 
 get '/booklist' do 
   template('ALL the books!') do |h|
-    h.div(:class => 'booklist') do
-      # DB[:books].all.each do |book|
-      #   h.span(:class => 'booklisting') do
-      #     nameid = book[:name]
-      #     namething = DB[:names].first(:id => nameid)
-      #     name = namething[:name]
-      #     h.a(:href => "/view/book?id=#{book[:id]}"){name}
-      #   end
-      #   h.br
-      # end
+    h.table(class: 'booklist', border: 0) do
       Book.all.each do |book|
-        h.span(:class => 'booklisting') do
-          h.a(:href => "/view/book?id=#{book.id}",
-              :class => "booklink"){
-            book.namestr
-          }
+        h.tr(class: 'booklisting') do
+          
+          h.td do
+            h.a(:class => 'fulllink',:href => "/book/#{book.id}") do
+              h.img(src: "/plain_book.png",width: 120,height: 120, class: "bookimg")
+            end
+          end
+          h.td(class: 'booklinkContainer') do
+            h.a(:class => 'fulllink booklink',:href => "/book/#{book.id}") do
+              CGI.escapeHTML(book.namestr)
+            end
+          end
         end
-        h.br
       end
       nil
     end
@@ -683,17 +702,6 @@ end
 get '/development/?' do
   markdown :development
 end
-=begin
-get "/routes.txt" do
-	content_type 'plain/text'
-	#template("Actual Index!") do |h|
-		#h.p(:style => "text-align:left;font-family:monospace;white-space:nowrap;") do
-			#CGI::escapeHTML(
-			Sinatra::Application.routes.pretty_inspect#).gsub("\n","<br/>").gsub(' ',"<span> </span>")
-		#end
-	#end
-end
-=end
   
 get "/routes/?" do
 	routes = Sinatra::Application.routes
@@ -736,19 +744,19 @@ get '/ip' do
     h.h1{"#{request.ip}"}
   end
 end
-get '/db/dump.yaml' do
+get '/db/dump.json' do
   error 404 unless params[:pass] == "OMGthisIsAsoupers33cr3tp4sswordOMG"
-  content_type 'application/x-yaml', :encoding => "utf-8"
+  content_type 'application/json', :encoding => "utf-8"
   tables = DB.tables
   hash_db = Hash[ tables.zip( tables.map{|t| DB[t].all} ) ]
-  hash_db.to_yaml
+  JSON.generate(hash_db)
 end
+
 get '/trippy/?' do
   makehtml do |h|
     h.head do 
       h.title{"OMG"}
-      css = ['reset.css','omg.css']
-      css.each do |name|
+      ['reset.css','omg.css'].each do |name|
 				h.link(:href => name,:rel => "stylesheet",:type => "text/css")
 			end
       nil
@@ -765,7 +773,4 @@ end
 get '/ttdd/?' do
   redirect to("/ttdd/index.html")
 end
-# get '/except/?' do
-# 	this_is_not_a_real_method_and_will_raise_an_error
-# end
   

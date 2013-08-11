@@ -50,8 +50,7 @@ body{
 		margin:3px 5px 3px auto;
 		background-color:#001;
 		color:#FFF;
-		position:absolute;
-		right:0px;
+		float:right;
 		border:5px solid black;
 		border-radius:5px;
 }
@@ -87,14 +86,13 @@ body{
 #loginForm{
 		padding:10px;
 }
-#donatelink{
-		position:absolute;
-		right:0px;
+.bottomlinks{
+		float:right;
 }
-#donatelink:link   {color:#3366FF;}      /* unvisited link */
-#donatelink:visited{color:#9933FF;}  /* visited link */
-#donatelink:hover  {font-weight:bold;}  /* mouse over link */
-#donatelink:active {color:#11FF11;}  /* link is being clicked on */
+.blacklink:link   {color:#3366FF;}      /* unvisited link */
+.blacklink:visited{color:#9933FF;}  /* visited link */
+.blacklink:hover  {}  /* mouse over link */
+.blacklink:active {color:#11FF11;}  /* link is being clicked on */
 
 /*login.fg*/
 .stuffdoer{
@@ -108,6 +106,13 @@ body{
 		vertical-align:top;
 		overflow:visible;
 }
+.nextContainer{
+		padding-left:5px;
+}
+.prevContainer{
+		padding-right:5px;
+}
+
 
 table{overflow:visible;}
 
@@ -119,6 +124,9 @@ table{overflow:visible;}
 		bottom:0px;
 		left:0px;
 }
+#bottomPrevButton{
+		left:-4px;
+}
 #topNextButton,#topPrevButton{
 /*position:absolute;
 	top:5px;*/
@@ -128,6 +136,11 @@ table{overflow:visible;}
 		color:#00004C;
 		border:2px solid black;
 		text-decoration:none;
+		padding:2px;
+}
+#topPrevButton{
+		position:relative;
+		left:-4px;
 }
 #storybody{
 		margin-top:25px;
@@ -235,8 +248,33 @@ table{overflow:visible;}
 .subscribe:active{
 		background-color:#ccc;
 }
-/* usercp.fgh */
-.left,
-.right{ padding:5px; }
+.subscribed{
+		background-color:#ccc;
+}
+/* usercp */
+.left, .right{ padding:5px; }
 .left {text-align:right;}
 .right{text-align:left;}
+
+/* booklist */
+.booklisting{
+		width:100%;
+		border:2px solid black;
+		padding:2px;
+		margin:2px;
+}
+.bookimg{
+		float:left;
+}
+.fulllink{
+		display:block;
+		width:100%;
+		height:100%;
+}
+.booklink{
+		float:right;
+		margin:3px;
+}
+.booklinkContainer{
+		vertical-align:top;
+}

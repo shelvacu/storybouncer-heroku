@@ -193,7 +193,7 @@ class DBArray
     elsif thing.is_a?(@type)
       @set.where(:val => thing.id).delete
     else
-      raise ArgumentError, "'<<` must be given integer or type #{@type}"
+      raise ArgumentError, "'delete` must be given integer or type #{@type}"
     end
   end
   alias remove delete
@@ -224,6 +224,10 @@ class DBArray
     obj = obj.id if obj.class == @type
     ret = @set.order_by(:id).limit(1,index).update(:val => obj)
     return (ret == 0 ? nil : obj)
+  end
+  
+  def length
+    @set.count
   end
 end
 
@@ -400,6 +404,7 @@ class User < DBItem
   
   column_accessor :user,:pass,:email,:emailver,:auth,:ban
   alias name user
+  alias name= user=
   alias username user
   
    def veri

@@ -1,6 +1,6 @@
 require './local_sequel'
 DB.create_table! :paras do
-	primary_key :id, :index =>{:unique=>true}
+	primary_key :id, :index =>{:unique =>true}
 	Integer 	:auth
 	String		:an 		#author's note
 	String		:text 		#actual paragraph text
@@ -10,13 +10,13 @@ DB.create_table! :paras do
 end
 
 DB.create_table! :chaps do
-  primary_key :id, :index =>{:unique=>true}
+  primary_key :id, :index =>{:unique =>true}
   Integer     :paras
   String      :name
 end
 
 DB.create_table! :books do
-	primary_key :id, :index =>{:unique=>true}
+	primary_key :id, :index =>{:unique =>true}
 	Integer     :auth #or
   Integer     :chaps #arr
   Integer     :endvotes #arr
@@ -28,7 +28,7 @@ DB.create_table! :books do
 end
 
 DB.create_table! :users do
-  primary_key :id, :index =>{:unique=>true}
+  primary_key :id, :index =>{:unique =>true}
   String      :user, :unique => true
   String      :pass
   String      :email, :unique => true
@@ -38,11 +38,10 @@ DB.create_table! :users do
   Integer     :hist #arr
   Integer     :auth,:default => 0 # 0:user 1:mod 2:admin 3:owner 4+:invalid
   Time        :ban ,:default => Time.at(0) #d-fault 2 epoch
-  Integer     :subs #arr
 end
 
 DB.create_table! :names do
-	primary_key	:id, :index=>{:unique=>true}
+	primary_key	:id, :index =>{:unique =>true}
   Integer     :auth#or
 	String      :name
  	Integer	  	:upvotes #arr
@@ -50,18 +49,25 @@ DB.create_table! :names do
   TrueClass   :fin, :default => false #when voting ends
 end
 
+DB.create_table! :tags do
+  primary_key :id, :index =>{:unique => true}
+  String :name #short, underscored name, eg 'really_awesome'
+  String :fullname #eg 'Really Awesome'
+  String :description, :default => "" # 'Something that is so awesome, it deserved this tag'
+end
+
 DB.create_table! :array do
   primary_key :id
 end
 
-DB.create_table? :sessi do
-  primary_key :id
-  Time :usetime
-  Integer :userid
-  String :useragent
-  String :ip
-  String :data
-  TrueClass :lock
+DB.create_table! :subs do #used to manage subscriptions, ie relations of books to users.
+  foreign_key :book_id, :books, :key => :id
+  foreign_key :user_id, :users, :key => :id
+end
+
+DB.create_table! :book_tags do #relation between books and tags
+  foreign_key :book_id, :books, :key => :id
+  foreign_key :book_id, :tags,  :key => :id
 end
 
 DB.tables.each do |table_name|

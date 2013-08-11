@@ -22,6 +22,7 @@ def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
   return makehtml do |h|
 		h.head do
 			h.title{pagename}
+      h << '<meta name="viewport" content="width=device-width, initial-scale=1">'
 			css.each do |name|
 				h.link(:href => name,:rel => "stylesheet",:type => "text/css")
 			end
@@ -32,7 +33,8 @@ def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
 		end
 		h.body do
       h.div(:id => "notFooter") do
-        h.noscript{'<span style="margin-left:auto;margin-right:auto;">This site won\'t work as well without javascript.</span>'}
+        h.noscript{'<span style="margin-left:auto;margin-right:auto;">\
+This site won\'t work without javascript. Sorry!</span>'}
         h.div(:id => 'topbar') do
           h.img(:id => "toplogo",:src => '/smalllogo.gif')
           h.span(:id => 'stateinfo') do
@@ -66,11 +68,14 @@ def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
 			h.div(:id => "bottombar") do
 				h.div(:id => "innerbottombar") do
 					h.span(:id => "copy"){"Site design created by and Copyright &copy; Shelvacu Tebbs 2013"}
-					#h.span(:id => "donatelink") do
-					h.a(:id => "donatelink",
-              :href => "/donate",
-              :class => 'blacklink'){"Donate"}
-					#end
+					h.span(:class => "bottomlinks") do
+            h.a(:class => 'blacklink',
+                :href => "/development"){"Contact / Status"}
+            h << " | "
+            h.a(:id => "donatelink",
+                :href => "/donate",
+                :class => 'blacklink'){"Donate"}
+					end
 				end
 			end
 		end
