@@ -13,10 +13,13 @@ require 'json'
 
 check_votes = Rufus::Scheduler.start_new
 
-#check_votes.every '1m' do
-#  Book.all.each do |book|
-#    numvotes = book.pparas.map{|o| o.votes}.flatten.uniq.length
-#    book.subs
+check_votes.every '10m' do
+  Book.all.each do |book|
+    numvotes = book.pparas.map{|o| o.votes}.flatten.uniq.length
+    num_subs = DB[:subs].where(book_id: book.id).count
+    if numvotes > 10 and numvotes > num_subs
+      winning_para = book.pparas.map{|o| [o,o.vote_count]}.sort_by{|o| o[1]}.last[0]
+      
     
 
 if DB.tables.empty? #database has not been generated, it needs to be
@@ -58,6 +61,7 @@ else
 end 
 
 $site_name = "www.storybouncer.com"
+$development = development?
 
 def valid_email?(email)
   #return true unless ENV['TESTING_ENV'].nil?
@@ -227,7 +231,7 @@ post '/register/?' do
                   :html_body => e.to_s, 
                   :body => "Please copy+paste this url into your browser: \
 #{verify_link}\n\nOr, go to #{$site_name}/verify and enter the code \
-#{email_verify_key.inspect}") unless development?
+#{email_verify_key.inspect}") unless $development
 				h.h2{"Success :D"}
 				h.h5{"Please close this window, then check your email: #{params[:email]}"}
 			else
@@ -439,6 +443,10 @@ get '/book/*/*/?' do |book_id,chap_id| #/view/book?id=blabla&chap=1
   chap_id = chap_id.to_i
   chap_num = chap_id
   
+  if book_id >= 2147483648 || chap_id >= 2147483648 
+    error 404
+  end
+  
   begin
     book = Book.new(book_id)
   rescue ItemDoesntExist
@@ -632,7 +640,7 @@ get '/subscribe' do
     user = User.new(session[:userid])
     user.subs << book unless user.subs.include?(book)
     return "{error:'none'}" if json
-    redirect to "/view/book?id=#{id}#{params[:chap].nil? ? '' : '&chap='+params[:chap]}"
+    redirect to "/book/#{id}#{params[:chap].nil? ? '' : '/'+params[:chap]}"
   end
 end
     
@@ -773,4 +781,3 @@ end
 get '/ttdd/?' do
   redirect to("/ttdd/index.html")
 end
-  

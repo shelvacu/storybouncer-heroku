@@ -36,7 +36,12 @@ def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
         h.noscript{'<span style="margin-left:auto;margin-right:auto;">\
 This site won\'t work without javascript. Sorry!</span>'}
         h.div(:id => 'topbar') do
-          h.img(:id => "toplogo",:src => '/smalllogo.gif')
+          #h.img(:id => "toplogo",:src => '/smalllogo.gif', alt => 'storybouncer')
+          h.span(class:'toplinkbar') do
+            h.a(class:'linkreset',id:'sitename',href:"/"){"Storybouncer.com"}
+            h.span(class:'bar'){" | "}
+            h.a(class:'linkreset toplinks',href:"/booklist"){"Browse"}
+          end
           h.span(:id => 'stateinfo') do
             if session[:logged]
               h << "#{session[:user]} | "

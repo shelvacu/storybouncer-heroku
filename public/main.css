@@ -1,3 +1,24 @@
+.linkreset{
+		text-decoration:none;
+		color:inherit;
+}
+.linkreset:active{
+		text-decoration:none;
+		color:inherit;
+}
+.linkreset:hover{
+		text-decoration:none;
+		color:inherit;
+}
+.linkreset:visited{
+		text-decoration:none;
+		color:inherit;
+}
+.linkreset:focus{
+		text-decoration:none;
+		color:inherit;
+}
+
 html,body{
 		height:100%
 }
@@ -46,6 +67,12 @@ body{
 		padding:10px;
 		margin:100px;
 }
+#sitename{
+		font-size:21px;
+}
+.bar{
+		font-size:21px;
+}
 #stateinfo{
 		margin:3px 5px 3px auto;
 		background-color:#001;
@@ -63,6 +90,15 @@ body{
 		position:relative;
 		text-align:center;
 		margin-bottom:10px;
+		color:white;
+		background-color:black;
+}
+.toplinkbar{
+		float:left;
+		margin:5px;
+}
+.toplinks:hover,.toplinks:active{
+		border-bottom: 1px solid grey;
 }
 #bottombar{
 		width:100%;
@@ -149,6 +185,7 @@ table{overflow:visible;}
 }
 .storyname{
 		float:right;
+		margin-left: 20px;
 }
 .paratext{
 		text-align:left;
@@ -204,6 +241,9 @@ table{overflow:visible;}
 		width:99%;
 		height:300px;
 }
+.chaptername{
+		
+}
 .submitParaSubmit{
 		font-size: 36px;
 		border-radius: 50px;
@@ -241,6 +281,7 @@ table{overflow:visible;}
 		padding-right:4px;
 		color:black;
 		background-color:#fff;
+		margin-right:20px;
 }
 .subscribe:hover{
 		background-color:#f8f8f8;

@@ -38,6 +38,7 @@ DB.create_table! :users do
   String      :email, :unique => true
   String      :emailver
   TrueClass   :veri, :default => false
+  Integer     :subs #arr
   Integer     :hist #arr
   Integer     :auth,:default => 0 # 0:user 1:mod 2:admin 3:owner 4+:invalid
   Time        :ban ,:default => Time.at(0) #d-fault 2 epoch

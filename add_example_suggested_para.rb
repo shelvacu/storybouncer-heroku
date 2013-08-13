@@ -24,7 +24,7 @@ END
 
 puts 'loaded'
 
-authid = DB[:users].where(:user => "shelvacu").all[0][:id]
+authid = DB[:users].where(:user => "shelvacu").first[:id]
 nameid = DB[:names].insert(:auth => authid,
                            :name => name,
                            :upvotes => makearray,

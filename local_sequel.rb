@@ -28,7 +28,10 @@ else
   DB = Sequel.connect("jdbc:postgresql://localhost/?user=postgres&password=inspirecreatelearn")
 end
 
-DB.tables #this forces sequel to actually connect, to test
+DB.test_connection #this forces sequel to actually connect, to test
+puts "CHECKING MIGRATIONS"
+Sequel.extension :migration
+Sequel::Migrator.check_current(DB, 'database_mods')
 
 class TableDoesntExist < StandardError
 end
@@ -103,7 +106,7 @@ class DBItem
   def getattr(name, fromcache = false)
     if fromcache
       update_cache if @cache.nil
-      return @cache[name]
+      return @cache[name] || getattr(name,false)
     else
       #getall[name]
       @table.select(name).first[name]
@@ -327,6 +330,7 @@ class Chap < DBItem
   class << self
     def create(opts = {})
       opts[:paras] ||= makearray
+      super(opts)
     end
   end
   @tablename = :chaps
@@ -346,16 +350,27 @@ VotableItem = VoteableItem
 class Book < DBItem
   class << self
     def create(opts)
-      [:chaps,:pparas,:pnames,:subs].each{ |arr_name|
+      [:chaps,:pparas,:pnames].each{ |arr_name|
         opts[arr_name] ||= makearray
       }
       
       #req'd user,pass(md5),email, emailver
-      super(*opts)
+      super(opts)
     end
   end
   include VoteableItem
   @tablename = :books
+
+  def get_subs
+    DB[:subs].where(book_id:@id).all.map{|o| User.new(o[:user_id])}
+  end
+  def get_subs_length
+    DB[:subs].where(book_id:@id).count
+  end
+  def add_sub(user)
+    raise unless user.is_a?(User)
+    DB[:subs].insert(book_id: @id,user_id: user.id)
+  end
 
   def auth
     User.new(self[:auth])
@@ -394,13 +409,33 @@ end
 class User < DBItem
   class << self
     def create(opts)
-      [:subs,:hist].each do |arr|
+      [:hist].each do |arr|
         opts[arr] ||= makearray
       end
-      super(*opts)
+      super(opts)
+    end
+    
+    def from_name(name)
+      t = DB[@tablename].where(:user => name).all
+      return nil if t.empty?
+      return self.new(t[0][:id])
     end
   end
   @tablename = :users
+
+  def subs_dataset
+    DB[:subs].where(user_id:@id)
+  end
+  def get_subs
+    subs_dataset.all.map{|o| Book.new(o[:user_id])}
+  end
+  def get_subs_length
+    subs_dataset.count
+  end
+  def add_sub(book)
+    raise unless book.is_a?(Book)
+    DB[:subs].insert(user_id: @id,book_id: book.id)
+  end
   
   column_accessor :user,:pass,:email,:emailver,:auth,:ban
   alias name user
@@ -425,7 +460,7 @@ class Name < DBItem
   class << self
     def create(opts)
       opts[:fin] ||= false
-      super(*opts)
+      super(opts)
     end
   end
   include VotableItem
