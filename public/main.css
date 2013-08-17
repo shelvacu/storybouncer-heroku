@@ -273,6 +273,7 @@ table{overflow:visible;}
 		font-size:large;
 		margin-right:5px;
 }
+
 .subscribe{
 		float:left;
 		text-decoration:none;
@@ -289,8 +290,13 @@ table{overflow:visible;}
 .subscribe:active{
 		background-color:#ccc;
 }
-.subscribed{
+.subbed{
 		background-color:#ccc;
+}
+.subbed:hover{
+		background-color:#ccc;
+}
+.unsubbed{
 }
 /* usercp */
 .left, .right{ padding:5px; }

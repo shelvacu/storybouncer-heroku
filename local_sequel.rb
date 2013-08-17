@@ -17,7 +17,7 @@ def makearray(type = Integer,name = :val)
   end
   return id
 end
-#DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'].gsub("postgres:","jdbc:postgresql") || 'jdbc:sqlite:local.db')
+#DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'].gsub("postgres:","jdbc:postgresql:") || 'jdbc:sqlite:local.db')
 if (url = ENV['JUSTONEDB_DBI_URL'])
   m = url.match(/:\/\/(?<user>\w+):(?<pass>\w+)@(?<else>.*)/)
   DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&password=#{m[:pass]}")
@@ -214,7 +214,7 @@ class DBArray
     return (@set.where(:val => item).count) > 0
   end
   
-  def [](index,order_by = :id)
+  def [](index)
     ret = @set.order_by(:id).limit(1,index).first
     if ret.nil?
       return nil
@@ -223,7 +223,7 @@ class DBArray
     end
   end
   
-  def []=(index,obj,order_by = :id)
+  def []=(index,obj)
     obj = obj.id if obj.class == @type
     ret = @set.order_by(:id).limit(1,index).update(:val => obj)
     return (ret == 0 ? nil : obj)
@@ -231,6 +231,12 @@ class DBArray
   
   def length
     @set.count
+  end
+  
+  def last
+    thing = @set.order_by(Sequel.desc(:id)).limit(1).first
+    return nil if thing.nil?
+    return @type.new thing[:val]
   end
 end
 
@@ -315,7 +321,7 @@ class Para < DBItem
     User.new(self[:auth])
   end
   alias author auth
-  
+   
   column_accessor :an
   alias authors_note an
   alias authors_note= an=

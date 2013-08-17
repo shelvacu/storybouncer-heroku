@@ -36,6 +36,9 @@ check_votes.every '10m' do
         book.chaps << c
         c.paras << winning_para
       end
+      #Now email everyone about the new paragraph that just came out!
+      DB[:subs].where(book_id: book.id).all.each do |row|
+        user_id
     end
   end
 end

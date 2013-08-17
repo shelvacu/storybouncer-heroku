@@ -22,6 +22,8 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
+    rack-recaptcha (0.6.6)
+      json
     rack-test (0.6.2)
       rack (>= 1.0)
     rufus-scheduler (2.0.19)
@@ -52,6 +54,7 @@ DEPENDENCIES
   json-jruby
   markdown_meta
   pony
+  rack-recaptcha
   rufus-scheduler
   sequel
   sinatra
