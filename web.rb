@@ -154,6 +154,8 @@ before do
     rescue ItemDoesntExist
       session.clear
     end
+  elsif session[:logged] #but NO userid!
+    session.clear
   end
 end
 
@@ -258,15 +260,13 @@ post '/register/?' do
 			if DB[:users].where("lower(user) = ?",params[:user].downcase).empty? && DB[:users].where(:email => params[:email]).empty?
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
-				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
+				email_verify_key  =  (0...40).map{ o[rand(o.length)] }.join
 				DB[:users].insert(:user => params[:user],
                           :pass => Digest::SHA256.hexdigest(params[:pass]), 
                           :email => params[:email], 
                           :emailver => email_verify_key,
                           :hist => makearray,
                           :auth => 0)
-				session[:logged] = true
-				session[:user] = params[:user]
 				#email availible, all good!
 				verify_link = "http://#{$site_name}/verify?key=#{email_verify_key}"
 				e = HTMLMaker.new
