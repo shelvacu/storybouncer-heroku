@@ -65,13 +65,13 @@ DB.create_table! :array do
 end
 
 DB.create_table! :subs do #used to manage subscriptions, ie relations of books to users.
-  foreign_key :book_id, :books
-  foreign_key :user_id, :users
+  Integer :user_id
+  Integer :book_id
 end
 
 DB.create_table! :book_tags do #relation between books and tags
-  foreign_key :book_id, :books, :key => :id
-  foreign_key :tag_id, :tags,  :key => :id
+  Integer :book_id
+  Integer :tag_id
 end
 
 DB.tables.each do |table_name|
