@@ -65,6 +65,8 @@ DB.create_table! :array do
 end
 
 DB.create_table! :subs do #used to manage subscriptions, ie relations of books to users.
+  Integer :book_id
+  Integer :user_id
   foreign_key :book_id, :books, :key => :id
   foreign_key :user_id, :users, :key => :id
 end
