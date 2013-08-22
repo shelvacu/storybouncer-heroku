@@ -41,6 +41,7 @@ DB.create_table! :users do
   Integer     :hist #arr
   Integer     :auth,:default => 0 # 0:user 1:mod 2:admin 3:owner 4+:invalid
   Time        :ban ,:default => Time.at(0) #d-fault 2 epoch
+  String      :reset, :default => nil
 end
 
 DB.create_table! :names do
