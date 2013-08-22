@@ -17,9 +17,9 @@ def makearray(type = Integer,name = :val)
   return id
 end
 
-puts "CHECKING MIGRATIONS"
-Sequel.extension :migration
-Sequel::Migrator.check_current(DB, 'database_mods')
+#NOputs "CHECKING MIGRATIONS"
+#NOSequel.extension :migration
+#NOSequel::Migrator.check_current(DB, 'database_mods')
 
 class TableDoesntExist < StandardError
 end
