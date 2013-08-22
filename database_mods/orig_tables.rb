@@ -1,3 +1,7 @@
+require 'sequel'
+require 'jdbc/postgres'
+require 'time'
+
 if (url = ENV['JUSTONEDB_DBI_URL'])
   m = url.match(/:\/\/(?<user>\w+):(?<pass>\w+)@(?<else>.*)/)
   DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&password=#{m[:pass]}")
