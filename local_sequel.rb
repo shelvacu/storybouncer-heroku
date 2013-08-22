@@ -1,5 +1,4 @@
-require 'sequel'
-require 'jdbc/postgres'
+require './local_db'
 require 'time'
 
 module Boolean; end
@@ -17,18 +16,7 @@ def makearray(type = Integer,name = :val)
   end
   return id
 end
-#DB = Sequel.connect(ENV['JUSTONEDB_DBI_URL'].gsub("postgres:","jdbc:postgresql:") || 'jdbc:sqlite:local.db')
-if (url = ENV['JUSTONEDB_DBI_URL'])
-  m = url.match(/:\/\/(?<user>\w+):(?<pass>\w+)@(?<else>.*)/)
-  DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&password=#{m[:pass]}")
-else
-  #require 'jdbc/sqlite3'
-  #Jdbc::SQLite3.load_driver
-  #DB = Sequel.connect("jdbc:sqlite:local.db")
-  DB = Sequel.connect("jdbc:postgresql://localhost/?user=postgres&password=inspirecreatelearn")
-end
 
-DB.test_connection #this forces sequel to actually connect, to test
 puts "CHECKING MIGRATIONS"
 Sequel.extension :migration
 Sequel::Migrator.check_current(DB, 'database_mods')

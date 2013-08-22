@@ -1,4 +1,4 @@
-require './local_sequel'
+require './local_db'
 
 DB.drop_table(:subs) rescue nil
 DB.drop_table(:book_tags) rescue nil
