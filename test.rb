@@ -1,4 +1,6 @@
-require './templatecopy'
-session = {}
-session[:logged] = false
-puts template('test'){'lol'}
+require 'sinatra'
+
+get '/' do
+  return 'good!'
+  'bad.'
+end

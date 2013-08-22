@@ -25,7 +25,7 @@ check_votes.every '10m' do
       to_del.each do |para|
         book.pparas.delete(para)
         unless para == winning_para
-          DB[:paras].where(id: para.id).delete
+         DB[:paras].where(id: para.id).delete
         end
       end
       if winning_para.chapname.nil?
@@ -35,6 +35,26 @@ check_votes.every '10m' do
                         auth: winning_para.auth)
         book.chaps << c
         c.paras << winning_para
+      end
+      #Now email everyone about the new paragraph that just came out!
+      DB[:subs].where(book_id: book.id).all.each do |row|
+        user_id = row[:user_id]
+        user = User.new(user_id)
+        if user.veri?
+          Pony.mail(to: user.email,
+                    from: "admin@storybouncer.com",
+                    subject: "New paragraph in #{book.strname}",
+                    body: "Hey #{user.name}, the voting has ended and a new paragraph has been added! Go to http://www.storybouncer.com/book/#{book.id}/#{book.chaps.length}/ to see it! (copy+paste the url into your browser)",
+                    html_body: makehtml do |h|
+                      h.head{h.title{"New paragraph in #{CGI.escapeHTML(book.strname)}"}} #is this neccesary?
+                      h.body do
+                        h.span do 
+                          "Hey #{CGI.escapeHTML(user.name)}, the voting has ended and a new paragraph has been added! Go to <a href=\"http://www.storybouncer.com/book/#{book.id}/#{book.chaps.length}/\">http://www.storybouncer.com/book/#{book.id}/#{book.chaps.length}/</a> to see it! (if the link doesn't work, copy+paste the url into your browser)"
+                        end
+                      end
+                    end)
+          #done!?
+        end
       end
     end
   end
@@ -126,9 +146,11 @@ before do
   if request.host == "storybouncer.com"
     redirect request.url.gsub("storybouncer.com","www.storybouncer.com"),301
   end
-  if session[:logged]
+  if session[:userid]
     begin
       user = User.new(session[:userid])
+      session[:user] = user.name
+      session[:logged] = true
     rescue ItemDoesntExist
       session.clear
     end
@@ -161,8 +183,6 @@ get '/' do
         #end
       end
       h.h1{"Writing. Crowdsourced."}
-      h.p(:class => "desc"){"How it works:"}
-      h.p(:class => "desc"){"Someone makes a \"book\" consisting of a title, and a single paragraph. Everyone reads this, and following the same idea of the story someone writes another paragraph, a suggested paragraph. And another person. And another. Then, all the suggested paragraphs are voted on by the community, and the one with the most votes is selected to be part of the story. The process then repeats, and a story is born."}
       h.a(href:'/booklist'){h.h3{"Click here to get started!"}}
 		end
 	end
@@ -213,6 +233,11 @@ get '/register/?' do
 				h.br
         h << recaptcha_tag(:challenge)
         h.br
+        h.span(style: 'font-size:10px') do
+          h << "By clicking the \"Register\" button, you agree to the "
+          h.a(href: '/tos/'){"Terms of Service"}
+        end
+        h.br
 				h.input(:type => 'submit', :value => 'Register')
 			end
 		end
@@ -230,7 +255,7 @@ post '/register/?' do
       next "Invalid captcha" unless recaptcha_valid?
       next "Invalid username '#{CGI.escapeHTML(params[:user])}'" unless valid_username?(params[:user])
       next "Invalid email '#{CGI.escapeHTML(params[:email])}'" unless valid_email?(params[:email])
-			if DB[:users].where(:user => params[:user]).empty? && DB[:users].where(:email => params[:email]).empty?
+			if DB[:users].where("lower(user) = ?",params[:user].downcase).empty? && DB[:users].where(:email => params[:email]).empty?
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...10).map{ o[rand(o.length)] }.join
@@ -247,7 +272,7 @@ post '/register/?' do
 				e = HTMLMaker.new
 				e.body do
 					e.span{"Please visit:"}
-					e.a(:href => verify_link){"Here: #{verify_link}"}
+					e.a(:href => verify_link){"#{verify_link}"}
 					e.span{"To verify your account. <br />Alternatively, use the key \"#{email_verify_key}\" at #{$site_name}/verify"}
 				end
 				Pony.mail(:from => "no-reply@storybouncer.com",
@@ -256,7 +281,7 @@ post '/register/?' do
                   :html_body => e.to_s, 
                   :body => "Please copy+paste this url into your browser: \
 #{verify_link}\n\nOr, go to #{$site_name}/verify and enter the code \
-#{email_verify_key.inspect}") unless $development
+#{email_verify_key.inspect}") #unless $development
 				h.h2{"Success :D"}
 				h.h5{"Please close this window, then check your email: #{params[:email]}"}
 			else
@@ -312,20 +337,25 @@ get '/login/?' do
 			end
 		else
 			h.form(:method => "post", :id => "loginForm") do
-				h.table do
-				h.tbody do
-					h.tr do
-						h.td{ h.span(:class => 'stuffdoer'){"Username:"} }
-						h.td{ h.input(:type => "text",:name => "user",:id => "usernameBox") }
-					end
-					h.tr do
-						h.td{ h.span(:class => 'stuffdoer'){"Password:"} }
-						h.td{ h.input(:type => "password",:name => "pass") }
-					end
-					h.tr do
-						h.td{ h.input(:type => "submit") }
-					end
-				end
+				h.table(class:'center') do
+          h.tbody do
+            h.tr do
+              h.td{ h.span(:class => 'stuffdoer'){"Username:"} }
+              h.td{ h.input(:type => "text",:name => "user",:id => "usernameBox") }
+            end
+            h.tr do
+              h.td{ h.span(:class => 'stuffdoer'){"Password:"} }
+              h.td{ h.input(:type => "password",:name => "pass") }
+            end
+            h.tr do
+              h.td do
+                h.input(:type => "submit",:style => "float:right;")
+              end
+              h.td do
+                h.a(:href => "/emailreset",style:'font-size:10px'){"Forgot password?"}
+              end
+            end
+          end
 				end
 			end
 			h.script(:type => 'text/javascript') do
@@ -338,16 +368,17 @@ end
 post '/login/?' do
 	ret = "error" #this is default value; what it will return if ret is not set
 	if params[:user].nil? || params[:pass].nil?
-		ret = template('Error') do |h|
+		return template('Error') do |h|
 			h.h3{"Form submit failed. Please refresh and try again"}
 		end
-	elsif DB[:users].where(:user => params[:user]).empty?
+  end
+  dataset = DB[:users].where("lower(\"user\") = ?",params[:user].downcase)
+	if dataset.empty?
 		ret = template('Username Incorrect'){|h| h.h2{"Username incorrect"}}
-	elsif DB[:users].where(:user => params[:user],:pass => Digest::SHA256.hexdigest(params[:pass]) ).empty?
+	elsif dataset.where(:pass => Digest::SHA256.hexdigest(params[:pass]) ).empty?
 		ret = template('Password Incorrect'){|h| h.h2{"Password incorrect"}}
 	else
-		userdata = DB[:users].where(:user => params[:user] ).all[0]
-    #,:pass => Digest::SHA256.hexdigest(params[:pass])
+		userdata = dataset.first
 		session[:logged] = true
 		session[:user] = userdata[:user]
 		session[:userid] = userdata[:id]
@@ -381,9 +412,32 @@ get '/usercp/?' do
 				h.tr do
 					h.td(:class => 'left'){"Password:"}
 					h.td(:class => 'right') do
-            h.form do
-              h.span{"Please contact me if you would like to change your password."}
-              #h.input(:type => 'password'
+            h.form(method: 'post',action: '/resetpass',style:'border:2px solid black;padding-right:3px;') do
+              h.table do
+                h.tr do
+                  h.td(class: 'left'){"Current password:"}
+                  h.td do 
+                    h.input(type: 'password',name: 'current')
+                  end
+                end
+                h.tr do
+                  h.td(class: 'left'){"New password:"}
+                  h.td do 
+                    h.input(type: 'password',name: 'new')
+                  end
+                end
+                h.tr do
+                  h.td(class: 'left'){"Repeat new password:"}
+                  h.td do 
+                    h.input(type: 'password',name: 'new2')
+                  end
+                end
+                h.tr do
+                  h.td do
+                    h.input(type: 'submit',value:'Reset Password')
+                  end
+                end
+              end
             end
           end
 				end
@@ -415,6 +469,135 @@ get '/usercp/?' do
 			h.a(:href => '/login'){"Login?"}
 		end
 	end
+end
+
+post '/resetpass/?' do
+  if !session[:logged]
+    "you must log in!"
+  else
+    [:current,:new,:new2].each do |name|
+      return "WeIrd Error occured. Make sure you're using the user control panel (click on your name) to access this page" if params[name].nil?
+    end
+    if params[:new] != params[:new2]
+      return "New password and password confirmation do not match!"
+    end
+    user = User.new(session[:userid])
+    if user.pass == Digest::SHA256.hexdigest(params[:current])
+      user.pass = Digest::SHA256.hexdigest(params[:new])
+      return template("Success!") do |h| 
+        h << "Your password has been changed."
+        h.a(href: '/usercp'){"Go back."}
+      end
+    else
+      return "The provided password is not your current password. Please go back and try again"
+    end
+  end
+end
+
+get '/emailreset/?' do
+  template("Reset password") do |h|
+    h.div{"If you ever forget your password, you can send a reset link to your email address if your email is verified. If you have not verified your email, you can email me at theGuy@storybouncer.com"}
+    h.form(method:'post',action:'/emailreset') do
+      h.label(for: 'emailBox'){"Email:"}
+      h.input(type:'text',name:'email',id:'emailBox')
+      h.input(type:'submit',value:'Submit')
+    end
+  end
+end
+
+post '/emailreset/?' do
+  return "Error, make sure you are accessing this page from /emailreset and have submitted the form correctly" if params[:email].nil?
+  return "You're already logged in! Why do you need to recover a password?\
+  If it's for a different account, please go back and logout first" if session[:logged]
+  set = DB[:users].where(email: params[:email])
+  if set.count == 0
+    return "An account under the email \"#{params[:email]}\" does not exist."
+  else
+    user = User.new(set.first[:id])
+    if !user.veri
+      return "You're not verified! (sorry)\n\
+You need to either\n\
+ - Find the verification email that was sent to you, and click the link. Check your spam and junk folder\n\
+or\n\
+ - Contact me from the email registered with your account at admin@storybouncer.com"
+    end
+    o = [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
+    reset_code = (0...50).map{ o[rand(o.length)] }.join
+    user.reset = reset_code
+    visit_link = "http://www.storybouncer.com/finalreset?id=#{user.id}&code=#{reset_code}"
+    html_body = makehtml do |h|
+      h.body do
+        h.div{"Dear #{CGI.escapeHTML(user.name)},"}
+        h.br
+        h.div{"You have requested for you password to be reset for your account on storybouncer.com"}
+        h.div{"Please visit:"}
+        h.a(href: visit_link){visit_link}
+        h.div{"To reset your password. (if the link doesn't work, just copy+paste the url into your browser)"}
+      end
+    end
+    Pony.mail(to: user.email,
+              from: 'admin@storybouncer.com',
+              subject: "Request to reset the password for your account at storybouncer.com",
+              body: "Dear #{user.name},
+
+You have requested for your password to be reset for your account on storybouncer.com
+Please copy+paste this link into your browser:
+#{visit_link}",
+              html_body: html_body)
+    template("Success!") do |h|
+      h.p{"Email successfully sent! Please close this window, then check your email, #{user.email}"}
+    end
+  end
+end
+
+get '/finalreset/?' do
+  if params[:code].nil? || params[:id].nil?
+    return "Why did you come here?"
+  else
+    begin
+      user = User.new(params[:id].to_i)
+    rescue ItemDoesntExist
+      return "merg"
+    end
+    if user.reset != nil && user.reset == params[:code]
+      template("reset") do |h|
+        h.form(action:'/finalreset',method:'post') do 
+          h.label(for:'new'){"New password:"}
+          h.input(type:'password',name:'new',id:'new')
+          h.br
+          h.label(for:'new2'){"Reenter new password:"}
+          h.input(type:'password',name:'new2',id:'new2')
+          h.br
+          h.input(type:'submit',value:'Submit!')
+          h.input(type:'hidden',name:'id'  ,value: params[:id].to_i)
+          h.input(type:'hidden',name:'code',value: CGI.escapeHTML(params[:code]))
+        end
+      end
+    end
+  end
+end
+
+post '/finalreset/?' do
+  if params[:id].nil? || params[:code].nil? || params[:new].nil? || params[:new2].nil?
+    return "merg"
+  end
+  if params[:new] != params[:new2]
+    return template("Reset password") do |h|
+      h << "The passwords you entered do not match. Please go back and try again."
+    end
+  end
+  row = DB[:users].where(id: params[:id].to_i,reset: params[:code]).first
+  if row.nil?
+    return "Something went wrong. Please re-send the reset email using http://www.storybouncer.com/emailreset"
+  end
+  user = User.new(row[:id])
+  user.pass = Digest::SHA256.hexdigest(params[:new])
+  session[:userid] = user.id
+  session[:user] = user.name
+  session[:logged] = true
+  template("Password Reset!") do |h|
+    h << "Password successfully reset! You've been logged in."
+  end
 end
 
 get '/verify/?' do
@@ -489,7 +672,7 @@ get '/book/*/*/?' do |book_id,chap_id| #/book/id/chap
   name = chap.strname
   name = CGI.escapeHTML(name)
   book_name = CGI.escapeHTML(book.strname)
-  paras= chap.paras.all
+  paras = chap.paras.all
 
   last_chapter = chap_num >= book.chaps.count-1
   pparas = book.pparas.all_order_rand# if last_chapter
@@ -502,130 +685,117 @@ get '/book/*/*/?' do |book_id,chap_id| #/book/id/chap
   end
 
 	template("#{book_name}",'/vote.js') do |h|
-		h.singletablerow do
-			h.td(:class => 'prevContainer') do
-				if chap_num > 1
-					['top','bottom'].each do |s|
-						h.a(:href => "/book/#{book_id}/#{(chap_num - 1)}",:id => "#{s}PrevButton"){"Prev"}
-					end
-          nil
-				else
-					h.div(:class => 'spacefiller'){}
-				end
-			end
-			h.td do
-				h.div(:id => 'storybody') do
-          bar = Proc.new do #no, not as in foobar, as in the bar at the top of the page
-            h.div(class: 'storybar') do
-              h.a(:class => "#{subbed ? 'subbed' : 'unsubbed'} subscribe",
-                  :href => "/subscribe?bookid=#{book_id}&chap=#{chap_num}",
-                  :style => "visibility:#{session[:logged] ? 'visible' : 'hidden'}") do
-                h.img(src:"/mail-image.png",
-                      height:15)
-                h << "Subscribe to this book!"
-              end
-              h.h3(:class => 'storyname'  ){CGI.escapeHTML(book_name)}
-              h.h4(:class => 'chaptername'){name}
-            end
+    h.div(:id => 'storybody') do
+      prevnext = Proc.new do
+        h.div(class: "prevnext") do
+          if chap_num > 1
+            h.a(href: "/book/#{book_id}/#{chap_num - 1}",class:"navButton prevButton"){"Prev"}
           end
-          bar.call
-					h.br
-					paras.each do |para|
-						h.p(:class => 'paratext') do
-              CGI.escapeHTML(para.text).gsub("\n","<br/>")
-            end
-						h.br
-					end
-          #h << pparas.pretty_inspect
-          h.hr
-          if !fin && last_chapter
-            if session[:logged]
-              begin
-                user = User.new(session[:userid])
-              rescue ItemDoesntExist
-                redirect to("/login")
-              end
-            end
-            pparas.each do |para|
-              count = para.vote_count
-              #if count > 0
-              #  color = "#0f0" #green
-              #else
-              #end 
-              h.div(class:'pparaContainer',id:"ppara#{para.id}") do
+          if chap_num < book.chaps.count
+            h.a(href: "/book/#{book_id}/#{chap_num + 1}",class:"navButton nextButton"){"Next"}
+          end
+        end
+      end
+      bar = Proc.new do #no, not as in foobar, as in the bar at the top of the page
+        h.div(class: 'storybar') do
+          h.a(:class => "#{subbed ? 'subbed' : 'unsubbed'} subscribe",
+              :href => "/subscribe?bookid=#{book_id}&chap=#{chap_num}",
+              :style => "visibility:#{session[:logged] ? 'visible' : 'hidden'}") do
+            h.img(src:"/mail-image.png",
+                  height:15)
+            h << "Subscribe to this book!"
+          end
+          h.h3(:class => 'storyname'  ){CGI.escapeHTML(book_name)}
+          h.h4(:class => 'chaptername'){name}
+        end
+      end
+      prevnext.call
+      bar.call
+      h.br
+      paras.each do |para|
+        h.p(:class => 'paratext') do
+          CGI.escapeHTML(para.text).gsub("\n","<br/>")
+        end
+        h.br
+      end
+      #h << pparas.pretty_inspect
+      h.hr
+      if !fin && last_chapter
+        if session[:logged]
+          begin
+            user = User.new(session[:userid])
+          rescue ItemDoesntExist
+            redirect to("/login")
+          end
+        end
+        pparas.each do |para|
+          count = para.vote_count
+          #if count > 0
+          #  color = "#0f0" #green
+          #else
+          #end 
+          h.div(class:'pparaContainer',id:"ppara#{para.id}") do
                 h.p(:class => 'pparaText') do
-                  CGI.escapeHTML(para.text).gsub("\n","<br />")
-                end
-                h.br
-                h.div(:class => 'pparaFooter') do 
-                  h.span(:class => 'pparaVote') do
-                    size = 25
-                    h.img(:src => '/upvote.png',
-                          :width  => size,
-                          :height => size,
-                          :class => 'voteImage upVote'+(!user.nil? && para.upvotes.include?(user) ? " votedImage" : ''),
-                          :onclick => "vote(#{para.id},true,this)")
-                    h.img(:src => '/downvote.png',
-                          :width  => size,
-                          :height => size,
-                          :class => 'voteImage downVote'+(!user.nil? && para.downvotes.include?(user) ? " votedImage" : ''),
-                          :onclick => "vote(#{para.id},false,this)")
-                  end
-                  h.div(:class => "voteCount " +
-                  (count>0 ? "votePositive" : "voteNegative")) do
-                    count.to_s
-                  end
-                  h.div(:class => 'pparaAuthorContainer') do
-                    h << "by "
-                    h.span(:class => 'pparaAuthor') do 
-                      CGI.escapeHTML(para.author.name)
-                    end
-                  end
-                end
-              end
+              CGI.escapeHTML(para.text).gsub("\n","<br />")
             end
-            
-            h.div(:class => 'addsuggested') do
-              if not session[:logged]
-                h.h5{"Please login to suggest a new paragraph"}
-              else
-                h.form(:id => 'addParaForm',
-                       :action => '/submitPara',
-                       :method => 'post') do
-                  h.h5{"Suggest your own paragraph!"}
-                  h.textarea(:name => 'mainText',
-                             :class => 'submitParaText'){}
-                  h.input(:type => 'submit',
-                          :name => 'submit',
-                          :value => 'Submit!',
-                          :class => 'submitParaSubmit')
-                  h.input(:type => "hidden",
-                          :name => "bookID",
-                          :value =>"#{book_id}")
-                  h.input(:type => "hidden",
-                          :name => "chapID",
-                          :value =>"#{chap_num}")
+            h.br
+            h.div(:class => 'pparaFooter') do 
+              h.span(:class => 'pparaVote') do
+                size = 25
+                h.img(:src => '/upvote.png',
+                      :width  => size,
+                      :height => size,
+                      :class => 'voteImage upVote'+(!user.nil? && para.upvotes.include?(user) ? " votedImage" : ''),
+                      :onclick => "vote(#{para.id},true,this)")
+                h.img(:src => '/downvote.png',
+                      :width  => size,
+                      :height => size,
+                      :class => 'voteImage downVote'+(!user.nil? && para.downvotes.include?(user) ? " votedImage" : ''),
+                      :onclick => "vote(#{para.id},false,this)")
+              end
+              h.div(:class => "voteCount " +
+                    (count>0 ? "votePositive" : "voteNegative")) do
+                count.to_s
+              end
+              h.div(:class => 'pparaAuthorContainer') do
+                h << "by "
+                h.span(:class => 'pparaAuthor') do 
+                  CGI.escapeHTML(para.author.name)
                 end
               end
             end
           end
-          bar.call
-				end
-			end
-			h.td(:class => 'nextContainer') do
-				if chap_num < book.chaps.count
-					#h.div(:class => 'nextContainer') do
-					['top','bottom'].each { |s|
-						h.a(:href => "/book/#{book_id}/#{chap_num + 1}",:id => "#{s}NextButton"){"Next"}
-					}
-          nil
-					#end
-				else
-					h.div(:class => 'spacefiller'){}
-				end
-			end
-		end
-	end  
+        end
+        
+        h.div(:class => 'addsuggested') do
+          if not session[:logged]
+            h.h5{"Please login to suggest a new paragraph"}
+          else
+            h.form(:id => 'addParaForm',
+                   :action => '/submitPara',
+                   :method => 'post') do
+              h.h5{"Suggest your own paragraph!"}
+              h.textarea(:name => 'mainText',
+                         :class => 'submitParaText'){}
+              h.input(:type => 'submit',
+                      :name => 'submit',
+                      :value => 'Submit!',
+                      :class => 'submitParaSubmit')
+              h.input(:type => "hidden",
+                      :name => "bookID",
+                      :value =>"#{book_id}")
+              h.input(:type => "hidden",
+                      :name => "chapID",
+                      :value =>"#{chap_num}")
+              #thing
+            end
+          end
+        end
+      end
+      bar.call
+      prevnext.call
+    end
+  end
 end
 
 get '/book/*/?' do |book_id|
@@ -717,27 +887,31 @@ get '/vote' do
   return JSON(res)
 end
   
-  
+get '/howitworks/?' do
+  markdown :howitworks
+end
 
-get '/booklist' do 
+get '/booklist/?' do 
   template('ALL the books!') do |h|
-    h.table(class: 'booklist', border: 0) do
+    h.div(class: 'booklist') do
+      h.a(id: 'howitworkslink',href:'/howitworks'){"How it works"}
+      h.br
       Book.all.each do |book|
-        h.tr(class: 'booklisting') do
+        h.div(class: 'booklisting') do
           
-          h.td do
-            h.a(:class => 'fulllink',:href => "/book/#{book.id}") do
+          h.span(class:'bookimgContainer') do
+            h.a(:class => '',:href => "/book/#{book.id}") do
               h.img(src: "/plain_book.png",width: 120,height: 120, class: "bookimg")
             end
           end
-          h.td(class: 'booklinkContainer') do
+          h.span(class: 'booklinkContainer') do
             h.a(:class => 'fulllink booklink',:href => "/book/#{book.id}") do
               CGI.escapeHTML(book.namestr)
             end
           end
         end
       end
-      nil
+      "If you would like to add your own starter-book, please email me at storyideas@storybouncer.com"
     end
   end
 end
@@ -748,6 +922,10 @@ end
 
 get '/development/?' do
   markdown :development
+end
+
+get '/tos/?' do
+  markdown :tos
 end
   
 get "/routes/?" do

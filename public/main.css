@@ -1,3 +1,7 @@
+.center{
+		margin-left:auto;
+		margin-right:auto;
+}
 .linkreset{
 		text-decoration:none;
 		color:inherit;
@@ -24,8 +28,9 @@ html,body{
 }
 
 body{
-		overflow-x:hidden;
-		overflow-y:scroll;
+		overflow:auto;
+		/*overflow-x:hidden;
+		overflow-y:scroll;*/
 }
 
 .desc{
@@ -65,7 +70,16 @@ body{
 		border:5px outset #00A;
 		background-color:#fff;
 		padding:10px;
-		margin:100px;
+		margin-top:100px;
+		margin-bottom:50px;
+		max-width:75%
+}
+
+@media all and (max-width: 900px) and (min-width:450px){
+		#main{max-width:90%}
+}
+@media all and (max-width: 449px){
+		#main{max-width:100%}
 }
 #sitename{
 		font-size:21px;
@@ -82,10 +96,11 @@ body{
 		border-radius:5px;
 }
 .blacklink:visited{color:#a1f}/*link on a black background*/
+/*
 #managelink:link{color:#3366FF;}
 #managelink:visited{color:#3366FF;}
-/*#stateinfo:hover {font-weight:bold}*/
-#managelink:active{font-weight:bold;}
+/*#stateinfo:hover {font-weight:bold}
+#managelink:active{font-weight:bold;}*/
 #topbar{
 		position:relative;
 		text-align:center;
@@ -155,6 +170,7 @@ table{overflow:visible;}
 .spacefiller{
 		width:50px;
 }
+/*
 #bottomNextButton,#bottomPrevButton{
 		position:absolute;
 		bottom:0px;
@@ -165,7 +181,7 @@ table{overflow:visible;}
 }
 #topNextButton,#topPrevButton{
 /*position:absolute;
-	top:5px;*/
+	top:5px;*
 }
 #bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
 		background-color:#9999FF;
@@ -177,6 +193,19 @@ table{overflow:visible;}
 #topPrevButton{
 		position:relative;
 		left:-4px;
+}*/
+.navButton{
+		background-color:#9999FF;
+		color:#00004C;
+		border:2px solid black;
+		text-decoration:none;
+		padding:2px;
+}
+.prevButton{
+		float:left;
+}
+.nextButton{
+		float:right;
 }
 #storybody{
 		margin-top:25px;
@@ -305,23 +334,40 @@ table{overflow:visible;}
 
 /* booklist */
 .booklisting{
-		width:100%;
+		/*width:100%;*/
 		border:2px solid black;
 		padding:2px;
 		margin:2px;
 }
 .bookimg{
+		/*float:left;*/
+}
+.bookimgContainer{
 		float:left;
 }
+
+
 .fulllink{
 		display:block;
 		width:100%;
 		height:100%;
 }
 .booklink{
-		float:right;
-		margin:3px;
+		/*float:right;*/
+		margin:5px;
+		margin-right:15px;
 }
 .booklinkContainer{
-		vertical-align:top;
+		float:right;
+}
+#recaptcha_area{
+		margin-right:auto;
+		margin-left:auto;
+}
+.booklist{
+		padding-bottom:3px;
+}
+#howitworkslink{
+		font-size:12px;
+		float:left;
 }

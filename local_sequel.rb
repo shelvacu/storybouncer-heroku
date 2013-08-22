@@ -208,6 +208,7 @@ class DBArray
   def count
     @set.count
   end
+  alias length count
   
   def include?(item)
     item = item.id if item.is_a?(DBItem)
@@ -443,10 +444,11 @@ class User < DBItem
     DB[:subs].insert(user_id: @id,book_id: book.id)
   end
   
-  column_accessor :user,:pass,:email,:emailver,:auth,:ban
+  column_accessor :user,:pass,:email,:emailver,:auth,:ban,:reset
   alias name user
   alias name= user=
   alias username user
+  alias password_reset reset
   
    def veri
     !!self[:veri]
@@ -455,7 +457,6 @@ class User < DBItem
   def veri=(stuff)
     self[:veri] = !!stuff
   end
-  def_array(:subs,Book)
   def_array(:hist,Book)
   
   def inspect
