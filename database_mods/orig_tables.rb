@@ -1,4 +1,12 @@
-require './local_sequel'
+if (url = ENV['JUSTONEDB_DBI_URL'])
+  m = url.match(/:\/\/(?<user>\w+):(?<pass>\w+)@(?<else>.*)/)
+  DB = Sequel.connect("jdbc:postgresql://#{m[:else]}?user=#{m[:user]}&password=#{m[:pass]}")
+else
+  #require 'jdbc/sqlite3'
+  #Jdbc::SQLite3.load_driver
+  #DB = Sequel.connect("jdbc:sqlite:local.db")
+  DB = Sequel.connect("jdbc:postgresql://localhost/?user=postgres&password=inspirecreatelearn")
+end
 
 DB.drop_table(:subs) rescue nil
 DB.drop_table(:book_tags) rescue nil
