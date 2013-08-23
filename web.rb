@@ -998,3 +998,7 @@ end
 get '/ttdd/?' do
   redirect to("/ttdd/index.html")
 end
+
+get /\/pres(entation)?\/?/ do
+  redirect "https://docs.google.com/presentation/d/19O433yWFCwCEw8nBJzySqGAVNHw5y_U6_yQqoDmbq_M/edit#slide=id.gfc42b281_023"
+end

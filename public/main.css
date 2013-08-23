@@ -29,8 +29,8 @@ html,body{
 
 body{
 		overflow:auto;
-		/*overflow-x:hidden;
-		overflow-y:scroll;*/
+		/*overflow-x:hidden;*/
+		overflow-y:scroll;
 }
 
 .desc{
