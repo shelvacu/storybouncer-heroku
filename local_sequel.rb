@@ -6,7 +6,7 @@ class TrueClass; include Boolean; end
 class FalseClass; include Boolean; end
 
 def getarray(id)
-  return DB[:"array#{id}"]
+  return DB[:"array#{id}"].order_by(:id)
 end
 def makearray(type = Integer,name = :val)
   id = DB[:array].insert
