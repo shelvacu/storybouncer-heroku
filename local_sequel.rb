@@ -438,9 +438,10 @@ class User < DBItem
   alias username user
   alias password_reset reset
   
-   def veri
+  def veri
     !!self[:veri]
   end
+  alias veri? veri  
   
   def veri=(stuff)
     self[:veri] = !!stuff

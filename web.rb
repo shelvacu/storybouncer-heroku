@@ -14,13 +14,13 @@ require 'rack/recaptcha'
 
 check_votes = Rufus::Scheduler.start_new
 
-check_votes.every '10m' do
+check_votes.every '1m' do
   Book.all.each do |book|
     next if book.fin?
-    numvotes = book.pparas.map{|o| o.votes}.flatten.uniq.length
+    numvotes = book.pparas.all.map{|o| o.votes}.flatten.uniq.length
     num_subs = DB[:subs].where(book_id: book.id).count
-    if numvotes > 5 and numvotes > num_subs
-      winning_para = book.pparas.map{|o| [o,o.vote_count]}.sort_by{|o| o[1]}.last[0]
+    if numvotes > 5 and numvotes > (num_subs/2)
+      winning_para = book.pparas.all.map{|o| [o,o.vote_count]}.sort_by{|o| o[1]}.last[0]
       to_del = book.pparas.all
       to_del.each do |para|
         book.pparas.delete(para)
@@ -40,7 +40,7 @@ check_votes.every '10m' do
       DB[:subs].where(book_id: book.id).all.each do |row|
         user_id = row[:user_id]
         user = User.new(user_id)
-        if user.veri?
+        if user.veri
           Pony.mail(to: user.email,
                     from: "admin@storybouncer.com",
                     subject: "New paragraph in #{book.strname}",
@@ -257,7 +257,7 @@ post '/register/?' do
       next "Invalid captcha" unless recaptcha_valid?
       next "Invalid username '#{CGI.escapeHTML(params[:user])}'" unless valid_username?(params[:user])
       next "Invalid email '#{CGI.escapeHTML(params[:email])}'" unless valid_email?(params[:email])
-			if DB[:users].where("lower(user) = ?",params[:user].downcase).empty? && DB[:users].where(:email => params[:email]).empty?
+			if DB[:users].where("lower(user) = ?",params[:user].downcase).empty? && DB[:users].where("lower(email) = ?",params[:email].downcase).empty?
 				#username && email is availible
 				o =  [('a'..'z'),('A'..'Z'),('0'..'9')].map{|i| i.to_a}.flatten
 				email_verify_key  =  (0...40).map{ o[rand(o.length)] }.join
@@ -509,7 +509,7 @@ post '/emailreset/?' do
   return "Error, make sure you are accessing this page from /emailreset and have submitted the form correctly" if params[:email].nil?
   return "You're already logged in! Why do you need to recover a password?\
   If it's for a different account, please go back and logout first" if session[:logged]
-  set = DB[:users].where(email: params[:email])
+  set = DB[:users].where("lower(email) = ?", params[:email].downcase)
   if set.count == 0
     return "An account under the email \"#{params[:email]}\" does not exist."
   else
