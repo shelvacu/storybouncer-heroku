@@ -160,6 +160,7 @@ before do
 end
 
 get '/' do
+  redirect "/booklist"
   win = (rand(10)==0)
 	h = HTMLMaker.new
   #h = h
@@ -178,6 +179,7 @@ get '/' do
 		}
 		h.body("style" => 'text-align:center') do
       h.div do
+
         h.img(:src => '/logo.gif', :alt => "Storybouncer")
         # $h.h1(:id => 'awesome'){"Currently in development"}
         #if win
