@@ -8,7 +8,7 @@ DB.create_table! :paras do
 	Integer 	:auth
 	String		:an 		#author's note
 	String		:text 		#actual paragraph text
-	Integer		:upvotes  #its an ID, remember that!
+	Integer		:upvotes  #it's an ID, remember that!
 	Integer		:downvotes#^
 	String  	:chapname, :default => nil
 end
@@ -57,7 +57,7 @@ DB.create_table! :tags do
   primary_key :id, :index =>{:unique => true}
   String :name #short, underscored name, eg 'really_awesome'
   String :fullname #eg 'Really Awesome'
-  String :description, :default => "" # 'Something that is so awesome, it deserved this tag'
+  String :description, :default => "" # eg 'Something that is so awesome, it deserved this tag'
 end
 
 DB.create_table! :array do

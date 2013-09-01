@@ -10,7 +10,7 @@ end
 def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
   js = [js] unless  js.is_a?(Array)
   css=[css] unless css.is_a?(Array)
-	css.insert(0,'/reset.css') #unless markdown
+	css.insert(0,'/reset.css') unless markdown
   css << '/main.css'
   css << '/markdown.css' if markdown
   #js  << '/reposition.js'

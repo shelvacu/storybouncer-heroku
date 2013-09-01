@@ -8,3 +8,6 @@
 body{
 		line-height:1.2;
 }
+li,ul{
+		list-style: disc none outside;
+}

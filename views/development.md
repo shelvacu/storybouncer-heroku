@@ -7,7 +7,7 @@ Storybouncer is constantly being developed!
 #### Done!
 Things that *have* happened
 
-*		The site works! (ie not much)
+*		The site works! (this is a lot more then it seems.)
 
 
 #### Going to happen
@@ -16,7 +16,6 @@ These things are coming on to the site.
 *       Book creation! You will be able to write your own 
 		prompt for people to use. (for now just email me
 	    and I'll most likely add it)
-*		A fancy-er logo
 *		Ability to view the authors of a book
 *		Ability to vote to end a book (they can't go on forever)
 
