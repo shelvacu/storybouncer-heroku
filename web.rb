@@ -161,6 +161,10 @@ before do
   end
 end
 
+get '/ping/?' do
+  'pong'
+end
+
 get '/' do
   redirect "/booklist"
   win = (rand(10)==0)
