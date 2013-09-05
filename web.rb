@@ -721,20 +721,20 @@ get '/book/*/*/?' do |book_id,chap_id| #/book/id/chap
       bar.call
       h.br
       paras.each do |para|
-        h.p(:class => 'paratext') do
-          CGI.escapeHTML(para.text).gsub("\n","<br/>")
+        h.div(class: 'paracontainer') do
+          h.p(class:'paratext') do
+            CGI.escapeHTML(para.text).gsub("\n","<br/>")
+          end
+          h.div(class:'paraAuthor') do
+            CGI.escapeHTML(para.auth.name)
+          end
         end
         h.br
       end
-      #h << pparas.pretty_inspect
       h.hr
       if !fin && last_chapter
         if session[:logged]
-          begin
-            user = User.new(session[:userid])
-          rescue ItemDoesntExist
-            redirect to("/login")
-          end
+          user = @user
         end
         pparas.each do |para|
           count = para.vote_count
@@ -894,7 +894,13 @@ get '/vote' do
   res[:votes] = para.vote_count
   return JSON(res)
 end
+
+get '/user/*/?' do |username| #User profiles! Oh man!
+  user = User.from_name(username)
+  error 404 if user.nil?
   
+end
+
 get '/howitworks/?' do
   markdown :howitworks
 end

@@ -1,3 +1,9 @@
+/* 
+ * Welcome to the source of storybouncer css!
+ * Be warned, it probably contains more wtf-s that you can count.
+ * You have been warned.
+ */
+
 .center{
 		margin-left:auto;
 		margin-right:auto;
@@ -173,30 +179,6 @@ table{overflow:visible;}
 .spacefiller{
 		width:50px;
 }
-/*
-#bottomNextButton,#bottomPrevButton{
-		position:absolute;
-		bottom:0px;
-		left:0px;
-}
-#bottomPrevButton{
-		left:-4px;
-}
-#topNextButton,#topPrevButton{
-/*position:absolute;
-	top:5px;*
-}
-#bottomNextButton,#bottomPrevButton,#topNextButton,#topPrevButton{
-		background-color:#9999FF;
-		color:#00004C;
-		border:2px solid black;
-		text-decoration:none;
-		padding:2px;
-}
-#topPrevButton{
-		position:relative;
-		left:-4px;
-}*/
 .navButton{
 		background-color:#9999FF;
 		color:#00004C;
@@ -222,7 +204,14 @@ table{overflow:visible;}
 .paratext{
 		text-align:left;
 }
-
+.paraAuthor:before{ /* css :before is SO weird */
+		content:"-"
+}
+.paraAuthor{
+		text-align:left;
+		font-size: 0.9em;
+		color:#888;
+}
 .pparaText{
 		margin-left:12px;
 		margin-top:5px;
@@ -235,7 +224,6 @@ table{overflow:visible;}
 		border-radius:10px;
 		position:relative;
 }
-
 .pparaVote{
 		float: left;
 		margin-bottom: 0px;

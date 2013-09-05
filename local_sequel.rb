@@ -17,10 +17,6 @@ def makearray(type = Integer,name = :val)
   return id
 end
 
-#NOputs "CHECKING MIGRATIONS"
-#NOSequel.extension :migration
-#NOSequel::Migrator.check_current(DB, 'database_mods')
-
 class TableDoesntExist < StandardError
 end
 class ItemDoesntExist < StandardError
@@ -411,7 +407,7 @@ class User < DBItem
     end
     
     def from_name(name)
-      t = DB[@tablename].where(:user => name).all
+      t = DB[@tablename].where('lower(user) = ?',name.downcase).all
       return nil if t.empty?
       return self.new(t[0][:id])
     end
