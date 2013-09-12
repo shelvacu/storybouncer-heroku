@@ -32,7 +32,7 @@ check_votes.every '1m' do
     next if book.fin?
     numvotes = book.pparas.all.map{|o| o.votes}.flatten.uniq.length
     num_subs = DB[:subs].where(book_id: book.id).count
-    if numvotes > 5 and numvotes > (num_subs/2)
+    if numvotes >= (num_subs*0.8)
       winning_para = book.pparas.all.map{|o| [o,o.vote_count]}.sort_by{|o| o[1]}.last[0]
       to_del = book.pparas.all
       to_del.each do |para|
