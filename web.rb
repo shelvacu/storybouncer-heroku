@@ -21,7 +21,7 @@ while error
     error = false
   rescue Sequel::Migrator::NotCurrentError
     puts "Migration is not current"
-    sleep(10)
+    sleep(1)
   end
 end
 
@@ -748,6 +748,10 @@ get '/book/*/*/?' do |book_id,chap_id| #/book/id/chap
       if !fin && last_chapter
         if session[:logged]
           user = @user
+        end
+        if not params[:p].nil?
+          first_para = params[:p].to_i
+          pparams.sort_by!{|o| (o.id == first_para ? 1 : 0)}
         end
         pparas.each do |para|
           count = para.vote_count
