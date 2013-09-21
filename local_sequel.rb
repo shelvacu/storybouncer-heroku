@@ -407,7 +407,7 @@ class User < DBItem
     end
     
     def from_name(name)
-      t = DB[@tablename].where('lower(user) = ?',name.downcase).all
+      t = DB[@tablename].where('lower("user") = ?',name.downcase).all
       return nil if t.empty?
       return self.new(t[0][:id])
     end

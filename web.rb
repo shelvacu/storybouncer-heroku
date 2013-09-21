@@ -12,6 +12,19 @@ require 'cgi' #SOOO MANY LIBRARIEZZZZZ!
 require 'json'
 require 'rack/recaptcha'
 
+##OH NO! CHECKING MIGRATIONS
+Sequel.extension :migration
+error = true
+while error
+  begin
+    Sequel::Migrator.check_current(DB, './migrations')
+    error = false
+  rescue Sequel::Migrator::NotCurrentError
+    puts "Migration is not current"
+    sleep(1)
+  end
+end
+
 check_votes = Rufus::Scheduler.start_new
 
 check_votes.every '1m' do
@@ -19,7 +32,7 @@ check_votes.every '1m' do
     next if book.fin?
     numvotes = book.pparas.all.map{|o| o.votes}.flatten.uniq.length
     num_subs = DB[:subs].where(book_id: book.id).count
-    if numvotes > (num_subs)
+    if numvotes > (num_subs) && numvotes > 1
       winning_para = book.pparas.all.map{|o| [o,o.vote_count]}.sort_by{|o| o[1]}.last[0]
       to_del = book.pparas.all
       to_del.each do |para|
@@ -736,6 +749,10 @@ get '/book/*/*/?' do |book_id,chap_id| #/book/id/chap
         if session[:logged]
           user = @user
         end
+        if not params[:p].nil?
+          first_para = params[:p].to_i
+          pparas.sort_by!{|o| (o.id == first_para ? 0 : 1)}
+        end
         pparas.each do |para|
           count = para.vote_count
           #if count > 0
@@ -896,9 +913,22 @@ get '/vote' do
 end
 
 get '/user/*/?' do |username| #User profiles! Oh man!
-  user = User.from_name(username)
+  user = User.from_name(username.downcase)
   error 404 if user.nil?
-  
+  safename = CGI.escapeHTML(user.name)
+  #Get total number of votes
+  total_votes = 0
+  paras_written = DB[:paras].where(auth: user.id).all
+  paras_written.each do |para|
+    total_votes += Para.new(para[:id]).vote_count
+  end
+  template(safename) do |h|
+    h.h1{safename}
+    h.span(id:'totalVotesLabel'){"Awesomeness: "}
+    h.span(id:'totalVotes'){total_votes.to_s}
+    h.br
+    h.h4{"More to come!"}
+  end
 end
 
 get '/howitworks/?' do
