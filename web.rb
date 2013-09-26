@@ -125,7 +125,7 @@ def valid_email?(email)
 	return false
 end
 def valid_username?(name)
-	return true unless name.match(/^[\w_^- ]{1,20}$/).nil?
+	return true unless name.match(/^[\w_^\- ]{1,20}$/).nil?
 	return false
 end
 
