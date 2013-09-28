@@ -444,6 +444,15 @@ class User < DBItem
   end
   def_array(:hist,Book)
   
+  def calc_reputation
+    total_votes = 0
+    paras_written = DB[:paras].where(auth: user.id).all
+    paras_written.each do |para|
+      total_votes += Para.new(para[:id]).vote_count
+    end
+    return total_votes
+  end
+  
   def inspect
     "#<User ##{id} \"#{name}\">"
   end

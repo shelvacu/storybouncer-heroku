@@ -362,3 +362,11 @@ table{overflow:visible;}
 		font-size:12px;
 		float:left;
 }
+
+/* 'user/*' page */
+
+#totalVotes{
+		font-size:150px;
+		/* font-size:AMERICAN XXXXXXXXXXXX LARGE; */
+		float:left
+}

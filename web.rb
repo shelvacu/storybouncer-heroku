@@ -917,15 +917,10 @@ get '/user/*/?' do |username| #User profiles! Oh man!
   error 404 if user.nil?
   safename = CGI.escapeHTML(user.name)
   #Get total number of votes
-  total_votes = 0
-  paras_written = DB[:paras].where(auth: user.id).all
-  paras_written.each do |para|
-    total_votes += Para.new(para[:id]).vote_count
-  end
+  rep = user.calc_reputation
   template(safename) do |h|
+    h.span(id:'totalVotes'){rep.to_s}
     h.h1{safename}
-    h.span(id:'totalVotesLabel'){"Awesomeness: "}
-    h.span(id:'totalVotes'){total_votes.to_s}
     h.br
     h.h4{"More to come!"}
   end
