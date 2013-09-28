@@ -32,7 +32,7 @@ check_votes.every '1m' do
     next if book.fin?
     numvotes = book.pparas.all.map{|o| o.votes}.flatten.uniq.length
     num_subs = DB[:subs].where(book_id: book.id).count
-    if numvotes >= (num_subs*0.8) && numvotes >= 1
+    if numvotes > (num_subs) && numvotes > 1
       winning_para = book.pparas.all.map{|o| [o,o.vote_count]}.sort_by{|o| o[1]}.last[0]
       to_del = book.pparas.all
       to_del.each do |para|
@@ -125,7 +125,7 @@ def valid_email?(email)
 	return false
 end
 def valid_username?(name)
-	return true unless name.match(/^[\w_^ ]{1,20}$/).nil?
+	return true unless name.match(/^[\w_^\- ]{1,20}$/).nil?
 	return false
 end
 
