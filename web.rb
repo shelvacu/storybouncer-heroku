@@ -50,8 +50,8 @@ end
 get '/fuck-you-youre-banned' do
   error 404 unless @user and @user.name.downcase == "epicricekakes"
   template("You are now banned.") do |h|
-    h.h1("You are now banned.")
-    h.p("If you wish to repeal your ban, please contact theGuy@storybouncer.com")
+    h.h1{"You are now banned."}
+    h.p{"If you wish to repeal your ban, please contact theGuy@storybouncer.com"}
   end
 end
 
