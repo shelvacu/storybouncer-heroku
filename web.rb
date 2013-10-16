@@ -42,7 +42,7 @@ before do
   elsif session[:logged] #but NO userid!
     session.clear
   end
-  if @user and @user.name.downcase == "epicricekakes"
+  if @user and @user.name.downcase == "epicricekakes" and !request.url.include?('/fuck-you-youre-banned')
     redirect to("/fuck-you-youre-banned")
   end
 end
