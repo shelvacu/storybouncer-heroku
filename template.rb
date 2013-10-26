@@ -14,18 +14,31 @@ def template(pagename="Missing title!",js = [],css = [],markdown = false,&block)
   css << '/main.css'
   css << '/markdown.css' if markdown
   #js  << '/reposition.js'
-  js.insert(0,"https://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
-  js << "http://konami-js.googlecode.com/svn/trunk/konami.js"
+  js.insert(0,"//ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js")
+  js << "//konami-js.googlecode.com/svn/trunk/konami.js"
   js << "/soundmanager/script/soundmanager2-nodebug-jsmin.js" 
   js << "/konami.js"
 	pagename += " - Storybouncer"
   return makehtml do |h|
 		h.head do
 			h.title{pagename}
-      h << '<meta name="viewport" content="width=device-width, initial-scale=1">'
+
+      h << '<meta name="viewport" content="width=device-width, height=device-height">'
 			css.each do |name|
 				h.link(:href => name,:rel => "stylesheet",:type => "text/css")
 			end
+      h << <<END
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44995845-1', 'storybouncer.com');
+  ga('send', 'pageview');
+
+</script>
+END
 			js.each do |name|
 				h.script(:type => 'text/javascript',:src => name){}
 			end

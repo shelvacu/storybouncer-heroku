@@ -13,7 +13,7 @@ get '/addbook/?' do
     h.form(action:'/addbook',method: 'post') do
       h.h2{"NEW BOOK"}
       h.br
-      h.p{"What shall the extravagant appellation(name) for your narraration be?"}
+      h.p{"What shall the extravagant name for your narraration be?"}
       h.input(type:'text',name:'bookname',style:'width:100%')
       h.br
       h.br
@@ -21,7 +21,7 @@ get '/addbook/?' do
       h.input(type:'text',name:'chapname',style:'width:100%')
       h.br
       h.br
-      h.p{"Now, fill the introduction with the glory of your writing! (Write the beggining of the story)"}
+      h.p{"Now, fill the introduction with the glory of your writing!"}
       h.textarea(name:'paratext',class:'submitParaText'){}
       h.input(type:'submit',value:"Submit!")
     end

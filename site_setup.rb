@@ -34,8 +34,6 @@ else
     },
     :from => "admin@storybouncer.com" 
   }
-  require 'sinatra/reloader'
-  also_reload './template.rb'
 end 
 
 $site_name = "www.storybouncer.com"

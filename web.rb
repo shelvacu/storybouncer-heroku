@@ -15,6 +15,13 @@ require './check_migrations' #OH NO! CHECKING MIGRATIONS!
 require './check_votes'
 require './site_setup'
 
+$development = development?
+
+if development?
+  require 'sinatra/reloader'
+  also_reload './template.rb'
+end
+
 def valid_email?(email)
   #return true unless ENV['TESTING_ENV'].nil?
 	return true unless email.match(/^\w*@\w*\.\w{2,5}(\.\w{2,5})?$/).nil?
@@ -29,6 +36,12 @@ before do
   if request.host == "storybouncer.com"
     redirect request.url.gsub("storybouncer.com","www.storybouncer.com"),301
   end
+  if $development
+    headers("Cache-Control" => "no-cache, no-store, must-revalidate",
+            "Pragma" => "no-cache",
+            "Expires" => "0")
+  end
+    
   @user = nil
   if session[:userid]
     begin
@@ -58,4 +71,5 @@ end
 Dir['./pages/*.rb'].each do |f|
   puts "Loading #{f}"
   require f
+  also_reload f if development?
 end
